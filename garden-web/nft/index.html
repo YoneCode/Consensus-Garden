@@ -3,6 +3,17 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Consensus Garden · NFT</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="description" content="A living, fully on-chain tree NFT on GenLayer — forged from a builder's GitHub by AI consensus, grown in real time, explorable in 3D.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Consensus Garden">
+<meta property="og:title" content="Consensus Garden — my living, on-chain tree">
+<meta property="og:description" content="A 2,000-supply NFT on GenLayer: trees forged from your GitHub by AI consensus, grown in real time, in a walkable 3D garden.">
+<meta property="og:image" content="https://consensus-garden.pages.dev/og.png">
+<meta property="og:url" content="https://consensus-garden.pages.dev/nft/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Consensus Garden — my living, on-chain tree">
+<meta name="twitter:description" content="Forged from your GitHub by AI consensus. Grown in real time. Only on GenLayer.">
+<meta name="twitter:image" content="https://consensus-garden.pages.dev/og.png">
 <style>
   :root{--mut:#8a98a8}
   *{margin:0;box-sizing:border-box}
@@ -13,12 +24,25 @@
   #hud .meta{margin-top:6px;font-size:12px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
   #tag{position:fixed;right:16px;bottom:14px;z-index:5;font-size:11px;letter-spacing:.18em;color:#54606e;text-transform:uppercase}
   #hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:5;font-size:11px;letter-spacing:.16em;color:#54606e;text-transform:uppercase}
+  #share{position:fixed;right:16px;top:16px;z-index:6;display:flex;gap:8px}
+  #share button{font:600 12px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;background:#0d141bcc;color:#eaf6ff;border:1px solid #ffffff22;border-radius:9px;padding:9px 13px;cursor:pointer;backdrop-filter:blur(6px)}
+  #share button:hover{border-color:#7ed957;color:#7ed957}
 </style></head>
 <body>
 <canvas id="c"></canvas>
 <div id="hud"><div class="sp" id="spn">—</div><div class="meta" id="mta">loading…</div></div>
 <div id="hint">drag to spin · scroll to zoom</div>
 <div id="tag">CONSENSUS GARDEN · GENLAYER</div>
+<div id="share"><button id="shareX">Share on X</button><button id="copyL">Copy link</button></div>
+<script>
+(function(){
+  var id=new URLSearchParams(location.search).get('id')||'';
+  var url='https://consensus-garden.pages.dev/nft/?id='+id;
+  var txt=encodeURIComponent("My living tree \uD83C\uDF33 on @GenLayer \u2014 a fully on-chain NFT forged from my GitHub by AI consensus, growing in real time. Plant yours free:");
+  document.getElementById('shareX').onclick=function(){window.open('https://twitter.com/intent/tweet?text='+txt+'&url='+encodeURIComponent(url),'_blank');};
+  document.getElementById('copyL').onclick=function(e){var b=e.currentTarget;navigator.clipboard.writeText(url).then(function(){b.textContent='Copied \u2713';setTimeout(function(){b.textContent='Copy link';},1500);});};
+})();
+</script>
 <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
 <script>
 /* ───── species + contract-matched DNA (same seed → same tree as on-chain 2D) ───── */
