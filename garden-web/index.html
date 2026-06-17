@@ -240,18 +240,18 @@
     mm.textContent='Planted ✓';
   }
   async function pollTree(a){
-    for(let i=0;i<45;i++){
-      await new Promise(r=>setTimeout(r,4000));
+    for(let i=0;i<100;i++){
+      await new Promise(r=>setTimeout(r,5000));
       try{const t=await (await fetch('/api/tokens/'+a)).json();
         if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,a,false);return;}}catch(e){}
     }
-    mshow('info','🌱 Your tree is planted on-chain — it may take a moment to appear. Check your garden shortly.');mm.textContent='Planted ✓';
+    mshow('info','🌱 Your tree is planted on-chain — GenLayer is finishing consensus. It will appear in your garden shortly.');mm.textContent='Planted ✓';
   }
   mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';mshow('info','🌱 Sponsor minting your tree on-chain…');
     try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
       if(d.already){mintDone(d.tokenId,a,true);}
       else if(d.soldOut){applySoldOut();}
-      else if(d.ok){mshow('info','🌱 Planted! Waking your tree on-chain — this can take ~30–60s…');pollTree(a);}
+      else if(d.ok){mshow('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(a);}
       else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}
     catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
 </script>
