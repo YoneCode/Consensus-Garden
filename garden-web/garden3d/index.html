@@ -216,20 +216,30 @@ function dnaFromToken(seed,species){
   const flowering=(species===1)||(rnd()<550);
   return {seed:(seed>>>0),sp:SPECIES[((species%5)+5)%5],spread:spreadDeg*Math.PI/180,branchiness:2,lean:leanDeg/45,flowering,blossomHeavy:(species===1)};
 }
-function plaque(text){
-  const cv=document.createElement('canvas');cv.width=256;cv.height=64;const g=cv.getContext('2d');
-  g.font='600 24px "IBM Plex Mono",monospace';const tw=Math.min(236,g.measureText(text).width);
-  g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(10,16,20,0.74)';g.fillRect(128-tw/2-12,16,tw+24,34);
-  g.fillStyle='#eaf6ff';g.fillText(text,128,34,236);
-  const tex=new THREE.CanvasTexture(cv);tex.anisotropy=4;
+function plaque(name,id){
+  const cv=document.createElement('canvas');cv.width=512;cv.height=160;const g=cv.getContext('2d');
+  const has=!!name;
+  const big=has?('@'+name):('Tree #'+id);
+  const rr=(x,y,w,h,r)=>{g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h);};
+  let fs=54;g.font='700 '+fs+'px system-ui,-apple-system,"Segoe UI",Roboto,Arial';
+  while(g.measureText(big).width>452&&fs>26){fs-=3;g.font='700 '+fs+'px system-ui,-apple-system,"Segoe UI",Roboto,Arial';}
+  const tw=g.measureText(big).width,pw=Math.min(504,tw+52),px=(512-pw)/2;
+  const ty=has?24:48,ph=has?114:64;
+  g.fillStyle='rgba(8,12,16,0.88)';rr(px,ty,pw,ph,20);g.fill();
+  g.lineWidth=3;g.strokeStyle='rgba(126,217,87,0.6)';rr(px,ty,pw,ph,20);g.stroke();
+  g.textAlign='center';g.textBaseline='middle';
+  g.fillStyle='#f4faff';g.font='700 '+fs+'px system-ui,-apple-system,"Segoe UI",Roboto,Arial';
+  g.fillText(big,256,has?66:80,452);
+  if(has){g.fillStyle='#7ed957';g.font='600 30px "IBM Plex Mono",monospace';g.fillText('#'+id,256,112,452);}
+  const tex=new THREE.CanvasTexture(cv);tex.anisotropy=8;tex.colorSpace=THREE.SRGBColorSpace;
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
-  sp.scale.set(2.0,0.5,1);return sp;
+  sp.scale.set(3.4,3.4*160/512,1);return sp;
 }
-function plantTree(dna,age,xz,top,label){
+function plantTree(dna,age,xz,top,name,id){
   const tree=buildTreeGroup(dna,Math.max(0.08,age));
   tree.position.set(xz[0],top,xz[1]);tree.scale.setScalar(0.62);
   tree.userData.sway=Math.random()*6.28;livingTrees.push(tree);scene.add(tree);
-  if(label){const pl=plaque(label);pl.position.set(xz[0],top+(tree.userData.maxy||3)*0.62+0.7,xz[1]);scene.add(pl);}
+  const pl=plaque(name,id);pl.position.set(xz[0],top+(tree.userData.maxy||3)*0.62+0.9,xz[1]);scene.add(pl);
 }
 const plantedTokens=[]; let CONTRACT=''; let inspectOpen=false;
 (async()=>{
@@ -242,7 +252,7 @@ const plantedTokens=[]; let CONTRACT=''; let inspectOpen=false;
   if(!toks.length){return;}
   const now=Math.floor(Date.now()/1000);
   toks.forEach((tok,i)=>{if(i>=peds.length)return;const p=peds[i];const age=growthPM(now-(tok.mint_ts||now))/1000;
-    plantTree(dnaFromToken(tok.seed,tok.species),age,p.xz,p.top,(tok.github||('#'+tok.id))+' · #'+tok.id);
+    plantTree(dnaFromToken(tok.seed,tok.species),age,p.xz,p.top,tok.github||'',tok.id);
     plantedTokens.push({x:p.xz[0],z:p.xz[1],tok});});
 })();
 
