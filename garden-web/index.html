@@ -122,7 +122,7 @@
       <a class="btn p" href="#mintnow">Mint your tree — free</a>
       <a class="btn s" href="/garden3d/">Enter the 3D garden</a>
     </div>
-    <div class="chip"><span class="dot"></span><b id="cMint">—</b>&nbsp;/ 2000 planted&nbsp;·&nbsp;free&nbsp;·&nbsp;gasless</div>
+    <div class="chip" id="chip"><span class="dot"></span><b id="cMint">—</b>&nbsp;/ 2000 planted&nbsp;·&nbsp;free&nbsp;·&nbsp;gasless</div>
   </div>
 </header>
 
@@ -210,7 +210,8 @@
     const a=document.getElementById('addr');if(a)a.textContent=s.contract||'';
     const e=document.getElementById('explorer');if(e)e.href=ex;
     const f=document.getElementById('fexp');if(f)f.href=ex;
-    const mp=document.getElementById('mPhase');if(mp)mp.textContent=s.phaseOpen?'Open mint — everyone.':'Phase 1: builders only.';
+    const mp=document.getElementById('mPhase');if(mp)mp.textContent=s.soldOut?'Sold out — all 2,000 planted.':(s.phaseOpen?'Open mint — everyone.':'Phase 1: builders only.');
+    if(s.soldOut)applySoldOut();
   }).catch(()=>{});
   // scroll reveal
   const io=new IntersectionObserver((es)=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.12});
@@ -218,6 +219,14 @@
   // on-page mint
   const mw=document.getElementById('mw'),mc=document.getElementById('mCheck'),mm=document.getElementById('mMint'),mmsg=document.getElementById('mMsg'),mlinks=document.getElementById('mLinks');
   const mshow=(c,h)=>{mmsg.className='mmsg on '+c;mmsg.innerHTML=h;};
+  function applySoldOut(){
+    const chip=document.getElementById('chip');
+    if(chip)chip.innerHTML='<span class="dot" style="background:#e0564f;box-shadow:none;animation:none"></span><b style="color:#e0564f">SOLD OUT</b>&nbsp;· 2000 / 2000 planted';
+    if(mw)mw.disabled=true;
+    if(mc){mc.disabled=true;mc.textContent='Sold out';}
+    if(mm)mm.style.display='none';
+    mshow('info','🌳 All 2,000 trees are planted — the garden is full. Explore it in 3D.');
+  }
   mc.onclick=async()=>{const a=mw.value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(a)){mshow('no','That doesn’t look like a wallet address.');return;}
     mc.disabled=true;mc.textContent='Checking…';mlinks.className='mlinks';mm.style.display='none';
     try{const d=await (await fetch('/api/eligibility/'+a)).json();
@@ -228,6 +237,7 @@
     try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
       if(d.ok||d.already){const id=d.tokenId;mshow('ok','🌳 '+(d.already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Species awakens shortly.');
         mlinks.className='mlinks on';mlinks.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/?wallet='+a+'" target="_blank">Enter your garden ↗</a>';mm.textContent='Planted ✓';}
+      else if(d.soldOut){applySoldOut();}
       else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
 </script>
 </body></html>

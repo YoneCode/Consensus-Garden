@@ -101,7 +101,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAddr(w)) return json(res, 400, { error: "bad wallet" });
       return json(res, 200, { wallet: w, ...eligibility(w) });
     }
-    if (u === "/api/stats") return json(res, 200, { supply: 2000, minted: tokCache.tokens.length, builders: Object.keys(builders).length, phaseOpen: phaseOpen(), phase2At: PHASE2_AT, contract: address });
+    if (u === "/api/stats") return json(res, 200, { supply: 2000, minted: tokCache.tokens.length, soldOut: tokCache.tokens.length >= 2000, builders: Object.keys(builders).length, phaseOpen: phaseOpen(), phase2At: PHASE2_AT, contract: address });
     if (u === "/api/tokens") return json(res, 200, { contract: address, count: tokCache.tokens.length, tokens: tokCache.tokens });
     if (u.startsWith("/api/tokens/")) {
       const w = (u.split("/").pop() || "").toLowerCase();
@@ -115,6 +115,7 @@ const server = http.createServer(async (req, res) => {
           if (!isAddr(wallet)) return json(res, 400, { error: "bad wallet" });
           const el = eligibility(wallet);
           if (!el.eligible) return json(res, 403, { error: el.reason });
+          if (tokCache.tokens.length >= 2000) return json(res, 200, { soldOut: true, error: "Sold out — all 2,000 trees are planted." });
           const r = await enqueue(() => doMint(wallet, el.github));
           refreshTokens();
           return json(res, 200, { ok: true, ...r, tier: el.tier });

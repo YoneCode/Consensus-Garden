@@ -83,6 +83,13 @@
 const $=id=>document.getElementById(id);
 const w=$('w'),checkBtn=$('check'),mintBtn=$('mint'),msg=$('msg'),links=$('links');
 function show(cls,html){msg.className='msg on '+cls;msg.innerHTML=html;}
+function applySoldOut(){
+  $('phaseBadge').textContent='Sold out';
+  w.disabled=true;
+  checkBtn.disabled=true;checkBtn.textContent='Sold out · 2000/2000';
+  mintBtn.style.display='none';
+  show('info','🌳 All 2,000 trees are planted — the collection is fully minted. Explore the garden in 3D.');
+}
 async function loadStats(){
   try{const s=await (await fetch('/api/stats')).json();
     $('sMint').textContent=s.minted;$('sBuild').textContent=s.builders;
@@ -90,6 +97,7 @@ async function loadStats(){
     const open=s.phaseOpen;
     $('phaseBadge').textContent=open?'Open mint':'Phase 1 · Builders';
     $('ph'+(open?'2':'1')).classList.add('active');
+    if(s.soldOut)applySoldOut();
   }catch(e){}
 }
 loadStats();
@@ -100,7 +108,7 @@ checkBtn.onclick=async()=>{
   try{const d=await (await fetch('/api/eligibility/'+addr)).json();
     if(d.eligible){show('ok','✅ Eligible'+(d.tier==='builder'?(' — builder <b>'+(d.name||d.github||'')+'</b> · github <b>'+(d.github||'—')+'</b>'):' · open mint')+'.');mintBtn.style.display='block';}
     else show('info','⏳ '+(d.reason||'Not eligible yet.'));
-  }catch(e){show('no','Couldn’t reach the server. Make sure the backend (node deploy/server.mjs) is running.');}
+  }catch(e){show('no','Couldn’t reach the server. Please try again in a moment.');}
   checkBtn.disabled=false;checkBtn.textContent='Check eligibility';
 };
 mintBtn.onclick=async()=>{
@@ -112,6 +120,7 @@ mintBtn.onclick=async()=>{
       links.className='links on';
       links.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a><a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
       mintBtn.textContent='Planted ✓';loadStats();
+    }else if(d.soldOut){applySoldOut();
     }else{show('no','✗ '+(d.error||'Mint failed.'));mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
   }catch(e){show('no','Mint request failed.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
 };
