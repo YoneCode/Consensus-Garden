@@ -40,6 +40,13 @@
   .links{margin-top:13px;display:none;flex-direction:column;gap:8px}.links.on{display:flex}
   .links a{color:var(--grn2);text-decoration:none;font:13px var(--mono);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
   .links a:hover{border-color:var(--grn)}
+  .modes{display:flex;gap:8px;margin-bottom:18px}
+  .mode{flex:1;font:600 12px var(--mono);letter-spacing:.06em;background:#070b0f;color:var(--mut);border:1px solid var(--line);border-radius:11px;padding:11px 8px;cursor:pointer}
+  .mode.active{color:#06120a;background:var(--grn2);border-color:var(--grn2)}
+  .note{margin-top:14px;font-size:12.5px;line-height:1.6;color:var(--mut)}
+  .note a{color:var(--grn2)}
+  .mnotice{background:#2a210f;border:1px solid #b9852f55;border-radius:13px;padding:14px 16px;color:#f0d9a8;font-size:13.5px;line-height:1.62;margin-bottom:18px}
+  .mnotice b{color:#ffd98a}
   .phases{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
   .ph{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
   .ph.active{border-color:var(--grn);box-shadow:0 0 0 1px var(--grn) inset}
@@ -62,6 +69,7 @@
     <div class="st"><div class="n" id="sBuild">—</div><div class="l">builders eligible</div></div>
     <div class="st"><div class="n">Free</div><div class="l">gasless · 1 / wallet</div></div>
   </div>
+  <div class="mnotice">⏳ <b>Minting is paused while the network catches up.</b> Earlier today a bug sent a burst of ~200 transactions in a short window, which tripped GenLayer testnet's per-wallet rate limit — so new mints are being throttled and the count is holding at 10. The bug is fixed; we're waiting for the testnet to reset, then minting resumes. Nothing is lost — your tree is safe. 🌱</div>
   <div class="panel">
     <label for="w">Your GenLayer wallet</label>
     <input id="w" placeholder="0x…" autocomplete="off" spellcheck="false">
@@ -69,6 +77,7 @@
     <button class="btn primary" id="mint" style="display:none">Plant my tree (free)</button>
     <div class="msg" id="msg"></div>
     <div class="links" id="links"></div>
+    <div class="note">No wallet, no connect, no gas — just paste your wallet and we sponsor the mint. At busy times you may wait in a short queue.</div>
   </div>
   <div class="phases">
     <div class="ph" id="ph1"><div class="when">Phase 1 · now</div><h3>Builders whitelist</h3><p>The GenLayer Incentivized Builder Program participants plant first — the founding grove.</p></div>
@@ -131,12 +140,17 @@ async function pollTree(addr,tx){
 }
 mintBtn.onclick=async()=>{
   const addr=w.value.trim();
-  mintBtn.disabled=true;mintBtn.textContent='Planting…';show('info','🌱 Sponsor minting your tree on-chain — a few seconds…');
-  try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:addr})})).json();
-    if(d.already){mintDone(d.tokenId,addr,true,d.tx);
-    }else if(d.soldOut){applySoldOut();
-    }else if(d.ok){show('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(addr,d.tx);
-    }else{show('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
+  mintBtn.disabled=true;mintBtn.textContent='Planting…';
+  try{
+    while(true){
+      show('info','🌱 Sponsor minting your tree on-chain — a few seconds…');
+      const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:addr})})).json();
+      if(d.busy){show('info','🌳 The garden is busy right now — you’re in the queue. Planting yours in ~'+(d.wait||15)+'s…');await new Promise(r=>setTimeout(r,((d.wait||15)*1000)+1500));continue;}
+      if(d.already){mintDone(d.tokenId,addr,true,d.tx);return;}
+      if(d.soldOut){applySoldOut();return;}
+      if(d.ok){show('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(addr,d.tx);return;}
+      show('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';return;
+    }
   }catch(e){show('no','Mint request failed. Please try again.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
 };
 </script>

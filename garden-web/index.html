@@ -69,6 +69,8 @@
   .mintbox .mlinks a{color:var(--grn2);font:13px var(--mono);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
   .mintbox .phint{font-size:13.5px;color:var(--mut);background:#0a0f14;border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:16px;line-height:1.55}
   .mintbox .phint a{color:var(--grn2);font-weight:600}
+  .mnotice{max-width:520px;margin:18px auto 0;background:#2a210f;border:1px solid #b9852f55;border-radius:13px;padding:14px 16px;color:#f0d9a8;font-size:13.5px;line-height:1.62;text-align:left}
+  .mnotice b{color:#ffd98a}
   /* marquee */
   .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0a0f14;overflow:hidden;white-space:nowrap}
   .strip .row{display:inline-block;padding:14px 0;animation:slide 30s linear infinite;font:600 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
@@ -143,6 +145,7 @@
 <section id="mintnow"><div class="wrap">
   <div class="eyebrow reveal">Free mint</div>
   <div class="h2 reveal">Plant your <em>tree</em></div>
+  <div class="mnotice reveal">⏳ <b>Minting is paused while the network catches up.</b> Earlier today a bug sent a burst of ~200 transactions in a short window, which tripped GenLayer testnet's per-wallet rate limit — so new mints are being throttled and the count is holding at 10. The bug is fixed; we're waiting for the testnet to reset, then minting resumes. Nothing is lost — your tree is safe. 🌱</div>
   <p class="ssub reveal">Open to everyone: GenLayer builders, the community, and the public. One tree per wallet, free and gasless. <b id="mPhase" style="color:var(--grn2)"></b></p>
   <div class="mintbox reveal">
     <div class="phint">🔗 Want your tree forged from <b>your</b> GitHub? Connect it at <a href="https://portal.genlayer.foundation" target="_blank" rel="noopener">portal.genlayer.foundation</a>, then come back and mint. No GitHub linked? You'll still get a tree, with a wildcard species.</div>
@@ -264,12 +267,17 @@
     }
     mshow('info','🌱 Your tree is planted on-chain — GenLayer is finishing consensus. It will appear in your garden shortly.');mm.textContent='Planted ✓';
   }
-  mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';mshow('info','🌱 Sponsor minting your tree on-chain…');
-    try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
-      if(d.already){mintDone(d.tokenId,a,true,d.tx);}
-      else if(d.soldOut){applySoldOut();}
-      else if(d.ok){mshow('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(a,d.tx);}
-      else{mshow('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mm.disabled=false;mm.textContent='Plant my tree (free)';}}
-    catch(e){mshow('no','Mint request failed. Please try again.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
+  mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';
+    try{
+      while(true){
+        mshow('info','🌱 Sponsor minting your tree on-chain…');
+        const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
+        if(d.busy){mshow('info','🌳 The garden is busy right now — you’re in the queue. Planting yours in ~'+(d.wait||15)+'s…');await new Promise(r=>setTimeout(r,((d.wait||15)*1000)+1500));continue;}
+        if(d.already){mintDone(d.tokenId,a,true,d.tx);return;}
+        if(d.soldOut){applySoldOut();return;}
+        if(d.ok){mshow('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(a,d.tx);return;}
+        mshow('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mm.disabled=false;mm.textContent='Plant my tree (free)';return;
+      }
+    }catch(e){mshow('no','Mint request failed. Please try again.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
 </script>
 </body></html>
