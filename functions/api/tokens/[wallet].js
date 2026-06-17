@@ -1,4 +1,4 @@
-import { readClient, rd, readToken, json, isAddr, submitReveal } from "../_lib.js";
+import { readClient, rd, readToken, json, isAddr, submitReveal, withLabel } from "../_lib.js";
 
 // Live per-wallet read. Used by the mint flow to poll until the tree appears.
 // Side effects (best-effort): cache the token into KV so the public garden picks
@@ -33,5 +33,5 @@ export async function onRequestGet(context) {
     context.waitUntil(submitReveal(env, tok.id));
   }
 
-  return json({ tokens: [tok] });
+  return json({ tokens: [withLabel(tok)] });
 }

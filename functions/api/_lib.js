@@ -1,9 +1,13 @@
 // Shared helpers for the Consensus Garden Pages Functions (Cloudflare Workers runtime).
 import { createClient, createAccount } from "genlayer-js";
 import { testnetBradbury } from "genlayer-js/chains";
+import labels from "./_labels.json";
 
 export const CONTRACT = "0xeA46E03C1c0aE3a1D3c93b98EF2d99915BD393A6";
 export const SUPPLY = 2000;
+
+// curated display label override (does NOT change on-chain data) — e.g. founder tree
+export const withLabel = (t) => (t && labels[String(t.id)] ? { ...t, github: labels[String(t.id)] } : t);
 
 export const isAddr = (s) => /^0x[0-9a-fA-F]{40}$/.test(s || "");
 

@@ -1,4 +1,4 @@
-import { json, CONTRACT } from "./_lib.js";
+import { json, CONTRACT, withLabel } from "./_lib.js";
 
 // Public token list for the 3D garden: static snapshot (seed) merged with the
 // KV list that grows as minters poll their freshly-planted trees.
@@ -19,6 +19,6 @@ export async function onRequestGet({ env, request }) {
     } catch (e) {}
   }
 
-  const tokens = [...byId.values()].sort((a, b) => a.id - b.id);
+  const tokens = [...byId.values()].sort((a, b) => a.id - b.id).map(withLabel);
   return json({ contract: CONTRACT, count: tokens.length, tokens }, 200, "public, max-age=20");
 }
