@@ -269,7 +269,7 @@
       if(d.already){mintDone(d.tokenId,a,true,d.tx);}
       else if(d.soldOut){applySoldOut();}
       else if(d.ok){mshow('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(a,d.tx);}
-      else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}
-    catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
+      else{mshow('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mm.disabled=false;mm.textContent='Plant my tree (free)';}}
+    catch(e){mshow('no','Mint request failed. Please try again.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
 </script>
 </body></html>

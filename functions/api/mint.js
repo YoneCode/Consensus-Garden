@@ -29,12 +29,13 @@ export async function onRequestPost({ request, env }) {
   try { minted = Number(await rd(client, "total_minted", [])); } catch (e) {}
   if (minted >= SUPPLY) return json({ soldOut: true, error: "Sold out — all 2,000 trees are planted." });
 
-  // submit (do not wait for the receipt)
-  try {
-    const wc = writeClient(pk);
-    const tx = await wc.writeContract({ address: CONTRACT, functionName: "mint", args: [wallet, github], value: 0n });
-    return json({ ok: true, pending: true, tx, tier: b ? "builder" : "public" });
-  } catch (e) {
-    return json({ error: e?.message || "mint failed" }, 500);
+  // submit (do not wait for the receipt); retry once to absorb transient testnet reverts
+  const wc = writeClient(pk);
+  let tx, lastErr;
+  for (let i = 0; i < 2; i++) {
+    try { tx = await wc.writeContract({ address: CONTRACT, functionName: "mint", args: [wallet, github], value: 0n }); break; }
+    catch (e) { lastErr = e; await new Promise((r) => setTimeout(r, 1500)); }
   }
+  if (!tx) return json({ error: "mint_failed", retry: true }, 502);
+  return json({ ok: true, pending: true, tx, tier: b ? "builder" : "public" });
 }

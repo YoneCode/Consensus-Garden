@@ -137,8 +137,8 @@ mintBtn.onclick=async()=>{
     if(d.already){mintDone(d.tokenId,addr,true,d.tx);
     }else if(d.soldOut){applySoldOut();
     }else if(d.ok){show('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(addr,d.tx);
-    }else{show('no','✗ '+(d.error||'Mint failed.'));mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
-  }catch(e){show('no','Mint request failed.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
+    }else{show('no','✗ Mint didn’t go through — a GenLayer network hiccup. Please tap Plant again.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
+  }catch(e){show('no','Mint request failed. Please try again.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
 };
 </script>
 </body></html>
