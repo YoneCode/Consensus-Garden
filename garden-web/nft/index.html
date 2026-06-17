@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consensus Garden · NFT</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root{--mut:#8a98a8}
+  *{margin:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#0a0f14;color:#eaf6ff;font-family:'IBM Plex Mono',ui-monospace,monospace}
+  #c{width:100%;height:100%;display:block;cursor:grab}#c:active{cursor:grabbing}
+  #hud{position:fixed;left:18px;top:16px;z-index:5}
+  #hud .sp{font:700 22px/1 system-ui;letter-spacing:.04em}
+  #hud .meta{margin-top:6px;font-size:12px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+  #tag{position:fixed;right:16px;bottom:14px;z-index:5;font-size:11px;letter-spacing:.18em;color:#54606e;text-transform:uppercase}
+  #hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:5;font-size:11px;letter-spacing:.16em;color:#54606e;text-transform:uppercase}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><div class="sp" id="spn">—</div><div class="meta" id="mta">loading…</div></div>
+<div id="hint">drag to spin · scroll to zoom</div>
+<div id="tag">CONSENSUS GARDEN · GENLAYER</div>
+<script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+<script>
+/* ───── species + contract-matched DNA (same seed → same tree as on-chain 2D) ───── */
+const SPECIES=[
+ {name:'MAPLE', trunk:0x5b3a22,leaf1:0x2f9e54,leaf2:0x7ed957,flower:0xff6b9d,bg:0x0e1626},
+ {name:'SAKURA',trunk:0x5b3a2a,leaf1:0x7fb069,leaf2:0xa7d98a,flower:0xffd1e8,bg:0x1a1322},
+ {name:'PINE',  trunk:0x42301e,leaf1:0x1f7a4d,leaf2:0x39a06a,flower:0xeaf6c8,bg:0x08130f},
+ {name:'EMBER', trunk:0x4a2a1a,leaf1:0xe0843a,leaf2:0xf5b454,flower:0xffe08a,bg:0x1a0f0a},
+ {name:'FROST', trunk:0x3a4a55,leaf1:0x5fd3d8,leaf2:0x9af0e6,flower:0xeaffff,bg:0x0a1420},
+];
+// integer LCG identical to the contract (BigInt for exact 31-bit math)
+function dnaFromSeed(seed,spOverride){
+  let s=BigInt((seed>>>0)||1); const M=1103515245n,A=12345n,MASK=0x7FFFFFFFn;
+  const rnd=()=>{ s=(s*M+A)&MASK; return Number(s%1000n); };
+  const sp=(spOverride!=null)?(((spOverride%5)+5)%5):((seed>>>0)%5);
+  const spreadDeg=22+Math.floor(rnd()*20/1000);
+  rnd();
+  const leanDeg=Math.floor((rnd()-500)*18/1000);
+  const flowering=(sp===1)||(rnd()<550);
+  return {sp:SPECIES[sp], seed:(seed>>>0), spread:spreadDeg*Math.PI/180, branchiness:2,
+          lean:leanDeg/45, flowering, blossomHeavy:(sp===1)};
+}
+// growth curve identical to the contract: seconds -> per-mille (0..1000)
+const BP=[[0,0],[3600,120],[86400,300],[604800,550],[2592000,800],[15552000,1000]];
+function growthPM(t){ if(t<=0)return 0;
+  for(let i=1;i<BP.length;i++){ if(t<BP[i][0]){const[t0,p0]=BP[i-1],[t1,p1]=BP[i];return p0+Math.floor((p1-p0)*(t-t0)/(t1-t0));}}
+  return 1000; }
+
+/* ───── 3D tree (same generator as the locked renderer) ───── */
+const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l]},
+  cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function buildTree(dna,age){
+  const r=mulberry32(((dna.seed>>>0) ^ 0x9e37)>>>0);
+  // unique per token (seed-driven), stable as it grows
+  const n=dna.branchiness, depthMax=Math.round(2+age*7), trunkLen=0.9+age*2.0,
+        trunkW=0.05+age*0.16, leafSize=0.05+age*0.10;
+  const segs=[],leaves=[];
+  function addLeaves(p){ if(age<=0.06)return; const k=4+(r()*5|0)+Math.round(age*3);
+    const bloomAge=dna.blossomHeavy?0.30:0.55, bloomP=dna.blossomHeavy?0.70:0.40;
+    for(let i=0;i<k;i++){const pos=[p[0]+(r()-0.5)*leafSize*3.4,p[1]+(r()-0.5)*leafSize*3.4,p[2]+(r()-0.5)*leafSize*3.4];
+      const fl=dna.flowering&&age>bloomAge&&r()<bloomP;
+      leaves.push({pos,s:leafSize*(0.8+r()*0.6)*(fl?1.05:1),color:fl?dna.sp.flower:(r()<0.6?dna.sp.leaf1:dna.sp.leaf2),flower:fl})}}
+  function branch(p,dir,L,w,depth){ if(depth<=0||L<0.05){addLeaves(p);return}
+    const p1=[p[0]+dir[0]*L,p[1]+dir[1]*L,p[2]+dir[2]*L];segs.push({p0:p.slice(),p1,w});
+    let up=Math.abs(dir[1])<0.95?[0,1,0]:[1,0,0];const u=norm(cross(dir,up)),v=norm(cross(dir,u));
+    for(let i=0;i<n;i++){const az=r()*Math.PI*2,ang=dna.spread*(0.7+r()*0.6);
+      let nd=[Math.cos(ang)*dir[0]+Math.sin(ang)*(Math.cos(az)*u[0]+Math.sin(az)*v[0]),
+        Math.cos(ang)*dir[1]+Math.sin(ang)*(Math.cos(az)*u[1]+Math.sin(az)*v[1]),
+        Math.cos(ang)*dir[2]+Math.sin(ang)*(Math.cos(az)*u[2]+Math.sin(az)*v[2])];
+      nd[0]+=dna.lean*0.12;nd[1]+=0.06;nd=norm(nd);branch(p1,nd,L*(0.74+r()*0.07),Math.max(0.008,w*0.7),depth-1)}}
+  branch([0,0,0],norm([dna.lean*0.3,1,0]),trunkLen,trunkW,depthMax);
+  let maxy=0;leaves.forEach(l=>maxy=Math.max(maxy,l.pos[1]));segs.forEach(s=>maxy=Math.max(maxy,s.p1[1]));
+  return{segs,leaves,maxy};
+}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* ───── scene ───── */
+const canvas=document.getElementById('c');
+const rnd3=new THREE.WebGLRenderer({canvas,antialias:true});rnd3.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(50,1,0.01,100);
+scene.add(new THREE.HemisphereLight(0xffffff,0x404a40,1.05));
+const dir=new THREE.DirectionalLight(0xfff2d8,1.4);dir.position.set(4,8,6);scene.add(dir);
+const fill=new THREE.DirectionalLight(0xcfe0ff,0.4);fill.position.set(-5,2,-4);scene.add(fill);
+const disc=new THREE.Mesh(new THREE.CircleGeometry(2.2,40),new THREE.MeshLambertMaterial({color:0x0c1117}));
+disc.rotation.x=-Math.PI/2;disc.position.y=-0.02;scene.add(disc);
+let treeGroup=new THREE.Group();scene.add(treeGroup);
+let az=0.6,el=0.32,rad=5,auto=true;const target=new THREE.Vector3(0,1.4,0);
+const _up=new THREE.Vector3(0,1,0),_o=new THREE.Object3D(),_q=new THREE.Quaternion(),_d=new THREE.Vector3(),_col=new THREE.Color();
+function renderTree(dna,age){
+  scene.remove(treeGroup);treeGroup=new THREE.Group();scene.add(treeGroup);
+  scene.background=new THREE.Color(dna.sp.bg);
+  const t=buildTree(dna,age);
+  target.set(0,(t.maxy)/2*1.0+0.3,0); rad=Math.max(3.2,t.maxy*1.9+1.5);
+  if(t.segs.length){const cyl=new THREE.CylinderGeometry(1,1,1,6);
+    const bm=new THREE.InstancedMesh(cyl,new THREE.MeshLambertMaterial({color:dna.sp.trunk}),t.segs.length);
+    t.segs.forEach((s,i)=>{const mid=new THREE.Vector3((s.p0[0]+s.p1[0])/2,(s.p0[1]+s.p1[1])/2,(s.p0[2]+s.p1[2])/2);
+      _d.set(s.p1[0]-s.p0[0],s.p1[1]-s.p0[1],s.p1[2]-s.p0[2]);const L=_d.length()||0.001;_d.normalize();
+      _q.setFromUnitVectors(_up,_d);_o.position.copy(mid);_o.quaternion.copy(_q);_o.scale.set(s.w,L,s.w);_o.updateMatrix();bm.setMatrixAt(i,_o.matrix)});
+    bm.instanceMatrix.needsUpdate=true;treeGroup.add(bm)}
+  if(t.leaves.length){const blob=new THREE.IcosahedronGeometry(1,0);
+    const lm=new THREE.InstancedMesh(blob,new THREE.MeshLambertMaterial({color:0xffffff,flatShading:true}),t.leaves.length);
+    t.leaves.forEach((l,i)=>{_o.position.set(l.pos[0],l.pos[1],l.pos[2]);_o.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3);
+      const s=l.s*(l.flower?2.0:2.6);_o.scale.set(s,s*0.85,s);_o.updateMatrix();lm.setMatrixAt(i,_o.matrix);lm.setColorAt(i,_col.set(l.color))});
+    lm.instanceMatrix.needsUpdate=true;if(lm.instanceColor)lm.instanceColor.needsUpdate=true;treeGroup.add(lm)}
+}
+function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;rnd3.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(canvas);resize();
+let drag=false,lx=0,ly=0;
+canvas.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;auto=false;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;az-=(e.clientX-lx)*0.01;el=Math.max(-0.4,Math.min(1.3,el+(e.clientY-ly)*0.01));lx=e.clientX;ly=e.clientY});
+canvas.addEventListener('pointerup',()=>drag=false);
+canvas.addEventListener('wheel',e=>{e.preventDefault();rad=Math.max(2,Math.min(14,rad+e.deltaY*0.004))},{passive:false});
+(function loop(){ if(auto)az+=0.0016;
+  cam.position.set(target.x+Math.cos(az)*Math.cos(el)*rad,target.y+Math.sin(el)*rad,target.z+Math.sin(az)*Math.cos(el)*rad);
+  cam.lookAt(target);rnd3.render(scene,cam);requestAnimationFrame(loop); })();
+
+/* ───── read token (URL params) + live growth ───── */
+const q=new URLSearchParams(location.search);
+const stage=a=>a<0.06?'Seed':a<0.18?'Sprout':a<0.4?'Sapling':a<0.7?'Young':a<0.95?'Mature':'Ancient';
+(async function load(){
+  let seed=parseInt(q.get('seed')||'1',10);
+  let born=parseInt(q.get('born')||String(Math.floor(Date.now()/1000)),10);
+  let id=q.get('id')||'?'; let species=null;
+  if(q.get('id')){ let d=null;
+    try{d=await (await fetch('/api/tokens')).json();}catch(e){}
+    if(!d||!d.tokens)try{d=await (await fetch('../garden_tokens.json')).json();}catch(e){}
+    const tok=((d&&d.tokens)||[]).find(t=>String(t.id)===String(q.get('id')));
+    if(tok){seed=tok.seed;born=tok.mint_ts;species=tok.species;id=tok.id;}
+  }
+  const dna=dnaFromSeed(seed,species);
+  function tick(){
+    const t=Math.floor(Date.now()/1000)-born;const pm=growthPM(t),age=pm/1000;
+    renderTree(dna,age);
+    document.getElementById('spn').textContent=dna.sp.name;
+    document.getElementById('mta').textContent='#'+id+' · '+stage(age)+' · '+Math.floor(pm*170/1000)+' MO';
+  }
+  tick(); setInterval(tick,5000);
+})();
+</script>
+</body></html>
