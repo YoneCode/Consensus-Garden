@@ -28,9 +28,12 @@ export async function onRequestGet(context) {
     } catch (e) {}
   }
 
-  // trigger species reveal once (builders only; contract guards double-reveal)
-  if (tok.github && (!tok.dna || tok.dna === "")) {
-    context.waitUntil(submitReveal(env, tok.id));
+  // trigger species reveal AT MOST ONCE per token (KV flag) — never on every poll
+  if (tok.github && (!tok.dna || tok.dna === "") && env.TOKENS) {
+    try {
+      const done = await env.TOKENS.get("rv:" + tok.id);
+      if (!done) { await env.TOKENS.put("rv:" + tok.id, "1"); context.waitUntil(submitReveal(env, tok.id)); }
+    } catch (e) {}
   }
 
   return json({ tokens: [withLabel(tok)] });
