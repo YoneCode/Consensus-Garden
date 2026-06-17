@@ -111,16 +111,27 @@ checkBtn.onclick=async()=>{
   }catch(e){show('no','Couldn’t reach the server. Please try again in a moment.');}
   checkBtn.disabled=false;checkBtn.textContent='Check eligibility';
 };
+function mintDone(id,addr,already){
+  show('ok','🌳 '+(already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Its species awakens shortly via AI consensus.');
+  links.className='links on';
+  links.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a><a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
+  mintBtn.textContent='Planted ✓';loadStats();
+}
+async function pollTree(addr){
+  for(let i=0;i<45;i++){
+    await new Promise(r=>setTimeout(r,4000));
+    try{const t=await (await fetch('/api/tokens/'+addr)).json();
+      if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,addr,false);return;}}catch(e){}
+  }
+  show('info','🌱 Your tree is planted on-chain — it may take a moment to appear. Check your garden shortly.');mintBtn.textContent='Planted ✓';
+}
 mintBtn.onclick=async()=>{
   const addr=w.value.trim();
   mintBtn.disabled=true;mintBtn.textContent='Planting…';show('info','🌱 Sponsor minting your tree on-chain — a few seconds…');
   try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:addr})})).json();
-    if(d.ok||d.already){const id=d.tokenId;
-      show('ok','🌳 '+(d.already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Its species awakens shortly via AI consensus.');
-      links.className='links on';
-      links.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a><a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
-      mintBtn.textContent='Planted ✓';loadStats();
+    if(d.already){mintDone(d.tokenId,addr,true);
     }else if(d.soldOut){applySoldOut();
+    }else if(d.ok){show('info','🌱 Planted! Waking your tree on-chain — this can take ~30–60s…');pollTree(addr);
     }else{show('no','✗ '+(d.error||'Mint failed.'));mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
   }catch(e){show('no','Mint request failed.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
 };

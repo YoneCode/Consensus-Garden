@@ -1,5 +1,0 @@
-# Cloudflare Pages — proxy the dApp's API calls to the Node backend (deploy/server.mjs).
-# Replace BACKEND_HOST with your deployed backend origin, then redeploy.
-# The live 3D garden hits /api/tokens first and falls back to the committed snapshot if the backend is unreachable.
-
-/api/*   https://BACKEND_HOST/api/:splat   200

@@ -233,11 +233,26 @@
       if(d.eligible){mshow('ok','✅ Eligible'+(d.tier==='builder'?(' — builder <b>'+(d.name||d.github||'')+'</b> · '+(d.github||'')):' · open mint')+'.');mm.style.display='block';}
       else mshow('info','⏳ '+(d.reason||'Not eligible yet.'));}catch(e){mshow('no','Couldn’t reach the server.');}
     mc.disabled=false;mc.textContent='Check eligibility';};
-  mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';mshow('info','🌱 Sponsor minting on-chain…');
+  function mintDone(id,a,already){
+    mshow('ok','🌳 '+(already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Its species awakens shortly via AI consensus.');
+    mlinks.className='mlinks on';
+    mlinks.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/?wallet='+a+'" target="_blank">Enter your garden ↗</a>';
+    mm.textContent='Planted ✓';
+  }
+  async function pollTree(a){
+    for(let i=0;i<45;i++){
+      await new Promise(r=>setTimeout(r,4000));
+      try{const t=await (await fetch('/api/tokens/'+a)).json();
+        if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,a,false);return;}}catch(e){}
+    }
+    mshow('info','🌱 Your tree is planted on-chain — it may take a moment to appear. Check your garden shortly.');mm.textContent='Planted ✓';
+  }
+  mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';mshow('info','🌱 Sponsor minting your tree on-chain…');
     try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
-      if(d.ok||d.already){const id=d.tokenId;mshow('ok','🌳 '+(d.already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Species awakens shortly.');
-        mlinks.className='mlinks on';mlinks.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/?wallet='+a+'" target="_blank">Enter your garden ↗</a>';mm.textContent='Planted ✓';}
+      if(d.already){mintDone(d.tokenId,a,true);}
       else if(d.soldOut){applySoldOut();}
-      else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
+      else if(d.ok){mshow('info','🌱 Planted! Waking your tree on-chain — this can take ~30–60s…');pollTree(a);}
+      else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}
+    catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
 </script>
 </body></html>
