@@ -57,6 +57,8 @@
   .mintbox .mmsg.on{display:block}.mmsg.ok{background:#13301d;border:1px solid #2f9e5544;color:#bdf0c8}.mmsg.no{background:#2a1414;border:1px solid #7a3030;color:#f0c4c4}.mmsg.info{background:#11202c;border:1px solid #2f6f8e44;color:#bfe0ee}
   .mintbox .mlinks{margin-top:12px;display:none;flex-direction:column;gap:8px}.mintbox .mlinks.on{display:flex}
   .mintbox .mlinks a{color:var(--grn2);font:13px var(--mono);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .mintbox .phint{font-size:13.5px;color:var(--mut);background:#0a0f14;border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:16px;line-height:1.55}
+  .mintbox .phint a{color:var(--grn2);font-weight:600}
   /* marquee */
   .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0a0f14;overflow:hidden;white-space:nowrap}
   .strip .row{display:inline-block;padding:14px 0;animation:slide 30s linear infinite;font:600 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
@@ -131,8 +133,9 @@
 <section id="mintnow"><div class="wrap">
   <div class="eyebrow reveal">Free mint</div>
   <div class="h2 reveal">Plant your <em>tree</em></div>
-  <p class="ssub reveal">Open to everyone — builders, the GenLayer community, and the public. One per wallet · free &amp; gasless. <b id="mPhase" style="color:var(--grn2)"></b></p>
+  <p class="ssub reveal">Open to everyone: GenLayer builders, the community, and the public. One tree per wallet, free and gasless. <b id="mPhase" style="color:var(--grn2)"></b></p>
   <div class="mintbox reveal">
+    <div class="phint">🔗 Want your tree forged from <b>your</b> GitHub? Connect it at <a href="https://portal.genlayer.com" target="_blank" rel="noopener">portal.genlayer.com</a>, then come back and mint. No GitHub linked? You'll still get a tree, with a wildcard species.</div>
     <label for="mw">Your GenLayer wallet</label>
     <input id="mw" placeholder="0x…" autocomplete="off" spellcheck="false">
     <button class="mbtn" id="mCheck">Check eligibility</button>
@@ -210,7 +213,7 @@
     const a=document.getElementById('addr');if(a)a.textContent=s.contract||'';
     const e=document.getElementById('explorer');if(e)e.href=ex;
     const f=document.getElementById('fexp');if(f)f.href=ex;
-    const mp=document.getElementById('mPhase');if(mp)mp.textContent=s.soldOut?'Sold out — all 2,000 planted.':(s.phaseOpen?'Open mint — everyone.':'Phase 1: builders only.');
+    const mp=document.getElementById('mPhase');if(mp)mp.textContent=s.soldOut?'Sold out.':(s.phaseOpen?'Minting is live.':'Builders-only for now.');
     if(s.soldOut)applySoldOut();
   }).catch(()=>{});
   // scroll reveal
