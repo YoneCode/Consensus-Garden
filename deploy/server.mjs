@@ -78,7 +78,7 @@ async function doMint(wallet, github) {
 }
 
 // ── static serving ──
-const CT = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".glb": "model/gltf-binary", ".ico": "image/x-icon", ".woff2": "font/woff2" };
+const CT = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".glb": "model/gltf-binary", ".ico": "image/x-icon", ".woff2": "font/woff2", ".mp4": "video/mp4" };
 function serveStatic(req, res) {
   let p = decodeURIComponent(req.url.split("?")[0]);
   if (p === "/") p = "/index.html";
