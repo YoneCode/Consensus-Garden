@@ -1,0 +1,22 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.keystore
+
+# dependencies & build output
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+
+# logs
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
