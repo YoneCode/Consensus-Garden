@@ -242,8 +242,10 @@
     mm.textContent='Planted ✓';
   }
   async function pollTree(a,tx){
+    const t0=Date.now();
     for(let i=0;i<100;i++){
       await new Promise(r=>setTimeout(r,5000));
+      mshow('info','🌱 Planting on-chain via GenLayer consensus… ('+Math.round((Date.now()-t0)/1000)+'s) — usually 3–5 min. Keep this page open.');
       try{const t=await (await fetch('/api/tokens/'+a)).json();
         if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,a,false,tx);return;}}catch(e){}
     }
