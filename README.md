@@ -111,22 +111,6 @@ deploy/           Node backend + scripts
   snapshot_*.mjs        cache on-chain tokens / world state for the front-end
 ```
 
----
-
-## 🚀 Deploy (Cloudflare Pages + Functions)
-
-The entire dApp runs on Cloudflare — static front-end **and** a serverless API (`functions/api/*`). No always-on server required.
-
-**Pages project settings**
-- **Build command:** `npm install`
-- **Build output directory:** `garden-web`
-- **Root directory:** `/`
-
-**Bindings & variables** (Pages → Settings → Functions / Variables)
-- Compatibility flag **`nodejs_compat`** (Production + Preview)
-- KV namespace bound as **`TOKENS`** (caches minted trees for the garden)
-- Encrypted secret **`DEPLOYER_PRIVATE_KEY`** — the sponsor wallet that pays gasless mints
-
 The API: `GET /api/stats`, `GET /api/eligibility/:wallet`, `GET /api/tokens`, `GET /api/tokens/:wallet`, `POST /api/mint`. Minting submits the sponsor transaction and the page polls until the tree is planted; the species reveal (GitHub → AI consensus) is triggered automatically.
 
 **Local development**
