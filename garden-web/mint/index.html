@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mint · Consensus Garden</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0f14;--card:#0d141b;--ink:#eaf6ff;--mut:#8a98a8;--faint:#54606e;--line:#ffffff14;
+        --grn:#2f9e54;--grn2:#7ed957;--mono:'IBM Plex Mono',ui-monospace,monospace;--serif:'Cormorant Garamond',Georgia,serif}
+  *{margin:0;box-sizing:border-box}
+  body{background:radial-gradient(1100px 560px at 50% -8%,#10231a,var(--bg)) fixed;color:var(--ink);font-family:Inter,system-ui,Arial;min-height:100vh;padding:28px 18px 60px}
+  .wrap{max-width:680px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px}
+  .brand{font:600 12px var(--mono);letter-spacing:.26em;text-transform:uppercase;color:var(--mut)}
+  .phase{font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid var(--grn);color:var(--grn2)}
+  .hero{text-align:center;margin-bottom:30px}
+  .kick{font:500 11px var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--grn2)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,7vw,72px);line-height:1.02;margin:8px 0 10px}
+  h1 em{color:var(--grn2);font-style:italic}
+  .sub{color:var(--mut);font-size:15px;line-height:1.65;max-width:520px;margin:0 auto}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}
+  .st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .st .n{font:700 22px Inter;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+  .st .l{font:500 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-top:3px}
+  .bar{height:5px;border-radius:999px;background:#ffffff10;margin-top:9px;overflow:hidden}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--grn),var(--grn2));width:0}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+  label{font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  input{width:100%;margin-top:8px;background:#070b0f;border:1px solid #ffffff22;border-radius:11px;color:var(--ink);padding:13px 14px;font:14px var(--mono);outline:none}
+  input:focus{border-color:var(--grn)}
+  .btn{width:100%;margin-top:13px;font:700 13px var(--mono);letter-spacing:.16em;text-transform:uppercase;border:0;border-radius:11px;padding:15px;cursor:pointer}
+  .btn.primary{color:#06120a;background:var(--grn2)}.btn.primary:hover{background:#9be873}
+  .btn:disabled{opacity:.45;cursor:default}
+  .msg{margin-top:15px;padding:12px 14px;border-radius:11px;font-size:14px;line-height:1.5;display:none}
+  .msg.on{display:block}
+  .msg.ok{background:#13301d;border:1px solid #2f9e5544;color:#bdf0c8}
+  .msg.no{background:#2a1414;border:1px solid #7a3030;color:#f0c4c4}
+  .msg.info{background:#11202c;border:1px solid #2f6f8e44;color:#bfe0ee}
+  .links{margin-top:13px;display:none;flex-direction:column;gap:8px}.links.on{display:flex}
+  .links a{color:var(--grn2);text-decoration:none;font:13px var(--mono);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+  .links a:hover{border-color:var(--grn)}
+  .phases{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+  .ph{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .ph.active{border-color:var(--grn);box-shadow:0 0 0 1px var(--grn) inset}
+  .ph h3{font:700 13px var(--mono);letter-spacing:.06em;color:var(--ink);margin-bottom:5px}
+  .ph .when{font:600 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--grn2);margin-bottom:8px}
+  .ph p{font-size:13px;line-height:1.55;color:var(--mut)}
+  .how{margin-top:24px;color:var(--mut);font-size:13px;line-height:1.7}
+  .how b{color:var(--ink);font-weight:600}
+  .foot{margin-top:26px;text-align:center;font:11px var(--mono);letter-spacing:.1em;color:var(--faint)}
+</style></head>
+<body><div class="wrap">
+  <div class="top"><span class="brand">Consensus Garden</span><span class="phase" id="phaseBadge">…</span></div>
+  <div class="hero">
+    <div class="kick">GenLayer · Proof of Build</div>
+    <h1>Plant your living <em>tree</em></h1>
+    <p class="sub">Your public GitHub, judged by decentralized AI consensus on-chain, becomes a unique tree that grows over real time. Free, gasless, one per wallet — only 2,000 will ever exist.</p>
+  </div>
+  <div class="stats">
+    <div class="st"><div class="n" id="sMint">—</div><div class="l">/ 2000 planted</div><div class="bar"><i id="sBar"></i></div></div>
+    <div class="st"><div class="n" id="sBuild">—</div><div class="l">builders eligible</div></div>
+    <div class="st"><div class="n">Free</div><div class="l">gasless · 1 / wallet</div></div>
+  </div>
+  <div class="panel">
+    <label for="w">Your GenLayer wallet</label>
+    <input id="w" placeholder="0x…" autocomplete="off" spellcheck="false">
+    <button class="btn primary" id="check">Check eligibility</button>
+    <button class="btn primary" id="mint" style="display:none">Plant my tree (free)</button>
+    <div class="msg" id="msg"></div>
+    <div class="links" id="links"></div>
+  </div>
+  <div class="phases">
+    <div class="ph" id="ph1"><div class="when">Phase 1 · now</div><h3>Builders whitelist</h3><p>The GenLayer Incentivized Builder Program participants plant first — the founding grove.</p></div>
+    <div class="ph" id="ph2"><div class="when">Phase 2 · soon</div><h3>Open to everyone</h3><p>Once announced, anyone can plant a tree until all 2,000 are gone.</p></div>
+  </div>
+  <div class="how">
+    <p><b>How it works.</b> At mint, the contract fetches your GitHub and GenLayer validators reach <b>AI consensus</b> on your “builder DNA”. That decides your tree’s <b>species</b> — an identity, never a score: every tree is equally beautiful and grows purely with <b>time</b>. Rendered and grown <b>fully on-chain</b>.</p>
+  </div>
+  <div class="foot">On-chain · GenLayer Testnet Bradbury · sponsor-minted, no fees, no wallet popup</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const w=$('w'),checkBtn=$('check'),mintBtn=$('mint'),msg=$('msg'),links=$('links');
+function show(cls,html){msg.className='msg on '+cls;msg.innerHTML=html;}
+async function loadStats(){
+  try{const s=await (await fetch('/api/stats')).json();
+    $('sMint').textContent=s.minted;$('sBuild').textContent=s.builders;
+    $('sBar').style.width=Math.min(100,s.minted/s.supply*100)+'%';
+    const open=s.phaseOpen;
+    $('phaseBadge').textContent=open?'Open mint':'Phase 1 · Builders';
+    $('ph'+(open?'2':'1')).classList.add('active');
+  }catch(e){}
+}
+loadStats();
+checkBtn.onclick=async()=>{
+  const addr=w.value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){show('no','That doesn’t look like a wallet address.');return;}
+  checkBtn.disabled=true;checkBtn.textContent='Checking…';links.className='links';mintBtn.style.display='none';
+  try{const d=await (await fetch('/api/eligibility/'+addr)).json();
+    if(d.eligible){show('ok','✅ Eligible'+(d.tier==='builder'?(' — builder <b>'+(d.name||d.github||'')+'</b> · github <b>'+(d.github||'—')+'</b>'):' · open mint')+'.');mintBtn.style.display='block';}
+    else show('info','⏳ '+(d.reason||'Not eligible yet.'));
+  }catch(e){show('no','Couldn’t reach the server. Make sure the backend (node deploy/server.mjs) is running.');}
+  checkBtn.disabled=false;checkBtn.textContent='Check eligibility';
+};
+mintBtn.onclick=async()=>{
+  const addr=w.value.trim();
+  mintBtn.disabled=true;mintBtn.textContent='Planting…';show('info','🌱 Sponsor minting your tree on-chain — a few seconds…');
+  try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:addr})})).json();
+    if(d.ok||d.already){const id=d.tokenId;
+      show('ok','🌳 '+(d.already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Its species awakens shortly via AI consensus.');
+      links.className='links on';
+      links.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a><a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
+      mintBtn.textContent='Planted ✓';loadStats();
+    }else{show('no','✗ '+(d.error||'Mint failed.'));mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
+  }catch(e){show('no','Mint request failed.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
+};
+</script>
+</body></html>
