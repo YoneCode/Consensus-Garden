@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consensus Garden · living NFTs on GenLayer</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta name="description" content="2,000 living, on-chain trees forged from your GitHub by decentralized AI consensus. Free, gasless, only on GenLayer.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070b0f;--card:#0d141b;--ink:#eaf6ff;--mut:#8a98a8;--faint:#54606e;--line:#ffffff12;
+        --grn:#2f9e54;--grn2:#7ed957;--cy:#5fd3d8;--mono:'IBM Plex Mono',ui-monospace,monospace;--serif:'Cormorant Garamond',Georgia,serif}
+  *{margin:0;box-sizing:border-box}html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Arial;line-height:1.6;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .mono{font-family:var(--mono)}
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;backdrop-filter:blur(10px);background:#070b0fcc;border-bottom:1px solid var(--line)}
+  nav .b{font:700 13px var(--mono);letter-spacing:.22em;text-transform:uppercase;display:inline-flex;align-items:center}
+  nav .b em{color:var(--grn2);font-style:normal}
+  nav .b .logo{height:22px;width:auto;margin-right:10px}
+  nav .soc{display:inline-flex;align-items:center;color:var(--mut)}
+  nav .soc:hover{color:var(--grn2)}
+  nav .soc svg{width:18px;height:18px;fill:currentColor}
+  nav .links{display:flex;gap:22px;align-items:center;font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+  nav .links a:hover{color:var(--ink)}
+  nav .cta{color:#06120a;background:var(--grn2);padding:9px 15px;border-radius:9px}
+  @media(max-width:680px){nav .links a:not(.cta):not(.soc){display:none}}
+  /* hero */
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 22px 70px;overflow:hidden}
+  .hero video,.hero .vbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .hero .vbg{background:radial-gradient(900px 540px at 50% 20%,#13301f,#070b0f 70%)}
+  .hero .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#070b0f55,#070b0f22 40%,#070b0fdd)}
+  .hero .in{position:relative;z-index:2;max-width:840px}
+  .kick{font:500 12px var(--mono);letter-spacing:.34em;text-transform:uppercase;color:var(--grn2)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,8vw,104px);line-height:.98;margin:12px 0 16px;letter-spacing:.005em}
+  h1 em{color:var(--grn2);font-style:italic}
+  .lead{font-size:clamp(15px,2.2vw,19px);color:#c3cdd6;max-width:600px;margin:0 auto 26px}
+  .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{font:700 13px var(--mono);letter-spacing:.16em;text-transform:uppercase;border-radius:11px;padding:15px 26px;border:1px solid transparent;transition:.2s;cursor:pointer}
+  .btn.p{color:#06120a;background:var(--grn2)}.btn.p:hover{background:#9be873;transform:translateY(-1px)}
+  .btn.s{color:var(--ink);border-color:var(--line);background:#0d141b99}.btn.s:hover{border-color:var(--grn)}
+  .chip{margin-top:26px;display:inline-flex;align-items:center;gap:10px;font:600 12px var(--mono);letter-spacing:.12em;color:var(--mut);background:#0d141bcc;border:1px solid var(--line);border-radius:999px;padding:9px 16px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--grn);box-shadow:0 0 0 0 #2f9e5566;animation:pulse 2s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 7px #2f9e5500}100%{box-shadow:0 0 0 0 #2f9e5500}}
+  .chip b{color:var(--grn2)}
+  .hero iframe.gframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:0;pointer-events:none}
+  .mintbox{max-width:520px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;text-align:left}
+  .mintbox label{font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .mintbox input{width:100%;margin-top:8px;background:#070b0f;border:1px solid #ffffff22;border-radius:11px;color:var(--ink);padding:13px 14px;font:14px var(--mono);outline:none}
+  .mintbox input:focus{border-color:var(--grn)}
+  .mintbox .mbtn{width:100%;margin-top:13px;font:700 13px var(--mono);letter-spacing:.16em;text-transform:uppercase;border:0;border-radius:11px;padding:15px;cursor:pointer;color:#06120a;background:var(--grn2)}
+  .mintbox .mbtn:hover{background:#9be873}.mintbox .mbtn:disabled{opacity:.45;cursor:default}
+  .mintbox .mmsg{margin-top:14px;padding:12px 14px;border-radius:11px;font-size:14px;display:none}
+  .mintbox .mmsg.on{display:block}.mmsg.ok{background:#13301d;border:1px solid #2f9e5544;color:#bdf0c8}.mmsg.no{background:#2a1414;border:1px solid #7a3030;color:#f0c4c4}.mmsg.info{background:#11202c;border:1px solid #2f6f8e44;color:#bfe0ee}
+  .mintbox .mlinks{margin-top:12px;display:none;flex-direction:column;gap:8px}.mintbox .mlinks.on{display:flex}
+  .mintbox .mlinks a{color:var(--grn2);font:13px var(--mono);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  /* marquee */
+  .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0a0f14;overflow:hidden;white-space:nowrap}
+  .strip .row{display:inline-block;padding:14px 0;animation:slide 30s linear infinite;font:600 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+  .strip .row span{margin:0 26px}.strip .row span b{color:var(--cy)}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  /* sections */
+  section{padding:84px 0}
+  .eyebrow{font:600 11px var(--mono);letter-spacing:.26em;text-transform:uppercase;color:var(--grn2);text-align:center}
+  .h2{font-family:var(--serif);font-weight:600;font-size:clamp(32px,5vw,52px);text-align:center;margin:8px 0 10px}
+  .h2 em{color:var(--grn2);font-style:italic}
+  .ssub{text-align:center;color:var(--mut);max-width:560px;margin:0 auto 44px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;transition:.2s}
+  .feat:hover{border-color:#2f9e5444;transform:translateY(-2px)}
+  .feat .ic{font-size:24px;margin-bottom:12px}
+  .feat h3{font:700 17px Inter;margin-bottom:7px}
+  .feat p{color:var(--mut);font-size:14px}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;position:relative}
+  .step .num{font:700 13px var(--mono);color:var(--grn2);letter-spacing:.1em}
+  .step h3{font:700 16px Inter;margin:8px 0 6px}.step p{color:var(--mut);font-size:14px}
+  /* on-chain */
+  .onchain{background:linear-gradient(180deg,#0c1f14,#0a0f14);border:1px solid #2f9e5433;border-radius:20px;padding:34px;text-align:center}
+  .onchain .addr{font:600 13px var(--mono);color:var(--cy);word-break:break-all;margin:12px 0 18px}
+  /* faq */
+  .faq{max-width:760px;margin:0 auto}
+  .q{border:1px solid var(--line);border-radius:13px;margin-bottom:10px;background:var(--card);overflow:hidden}
+  .q summary{list-style:none;cursor:pointer;padding:17px 20px;font:600 15px Inter;display:flex;justify-content:space-between;align-items:center}
+  .q summary::-webkit-details-marker{display:none}
+  .q summary .pl{color:var(--grn2);font:400 20px var(--mono);transition:.2s}
+  .q[open] summary .pl{transform:rotate(45deg)}
+  .q .a{padding:0 20px 18px;color:var(--mut);font-size:14px}
+  footer{border-top:1px solid var(--line);padding:40px 0;text-align:center;color:var(--faint)}
+  footer .fl{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:16px}
+  footer .fl a:hover{color:var(--grn2)}
+  .reveal{opacity:0;transform:translateY(18px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style></head>
+<body>
+<nav>
+  <a href="#top" class="b"><img src="/logo.svg" class="logo" alt="Consensus Garden logo">Consensus <em>Garden</em></a>
+  <div class="links">
+    <a href="#how">How it works</a><a href="#faq">FAQ</a>
+    <a href="/garden3d/">Garden</a>
+    <a class="soc" href="https://github.com/YoneCode/Consensus-Garden" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.75.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.42.36.79 1.08.79 2.18 0 1.58-.01 2.85-.01 3.24 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg></a>
+    <a class="soc" href="https://x.com/YoneCode" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <a class="cta" href="#mintnow">Mint free</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="vbg"></div>
+  <iframe class="gframe" src="/garden3d/?cinematic=1" title="Consensus Garden" loading="lazy"></iframe>
+  <div class="scrim"></div>
+  <div class="in">
+    <div class="kick">GenLayer · Proof of Build</div>
+    <h1>Your code becomes a <em>living tree</em>.</h1>
+    <p class="lead">2,000 fully on-chain <b style="color:var(--ink);font-weight:600">NFTs</b> — living trees, each forged from a builder's real GitHub by decentralized AI consensus and grown over real time. A generative NFT dApp only possible on GenLayer.</p>
+    <div class="btns">
+      <a class="btn p" href="#mintnow">Mint your tree — free</a>
+      <a class="btn s" href="/garden3d/">Enter the 3D garden</a>
+    </div>
+    <div class="chip"><span class="dot"></span><b id="cMint">—</b>&nbsp;/ 2000 planted&nbsp;·&nbsp;free&nbsp;·&nbsp;gasless</div>
+  </div>
+</header>
+
+<div class="strip"><div class="row" id="marq"></div></div>
+
+<section id="mintnow"><div class="wrap">
+  <div class="eyebrow reveal">Free mint</div>
+  <div class="h2 reveal">Plant your <em>tree</em></div>
+  <p class="ssub reveal">Open to everyone — builders, the GenLayer community, and the public. One per wallet · free &amp; gasless. <b id="mPhase" style="color:var(--grn2)"></b></p>
+  <div class="mintbox reveal">
+    <label for="mw">Your GenLayer wallet</label>
+    <input id="mw" placeholder="0x…" autocomplete="off" spellcheck="false">
+    <button class="mbtn" id="mCheck">Check eligibility</button>
+    <button class="mbtn" id="mMint" style="display:none">Plant my tree (free)</button>
+    <div class="mmsg" id="mMsg"></div>
+    <div class="mlinks" id="mLinks"></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <div class="eyebrow reveal">What makes it different</div>
+  <div class="h2 reveal">A living <em>on-chain</em> world</div>
+  <p class="ssub reveal">Not a static JPEG. A generative tree that is judged, rendered, grown and verified entirely on-chain by GenLayer validators.</p>
+  <div class="grid">
+    <div class="feat reveal"><div class="ic">🌳</div><h3>Living, growing NFTs</h3><p>Your tree sprouts, matures and blossoms over real time — computed from GenLayer's on-chain clock. It keeps growing after you log off.</p></div>
+    <div class="feat reveal"><div class="ic">🧠</div><h3>AI-judged identity</h3><p>At mint, validators read your public GitHub and reach <b>AI consensus</b> on your “builder DNA”. It sets your tree's species — fair: identity, never a score.</p></div>
+    <div class="feat reveal"><div class="ic">🌍</div><h3>Synced to the real world</h3><p>A consensus-verified on-chain clock and live ETH/BTC prices, fetched from the web by validators — no oracle, no server. Impossible on a normal chain.</p></div>
+    <div class="feat reveal"><div class="ic">🎨</div><h3>100% on-chain art</h3><p>Every tree is generative SVG rendered inside the contract. No IPFS, no servers — the art lives on-chain forever.</p></div>
+    <div class="feat reveal"><div class="ic">👥</div><h3>Walkable 3D garden</h3><p>Explore a first-person Japanese temple garden with other builders live — chat, inspect any tree's on-chain data, watch day turn to night in real time.</p></div>
+    <div class="feat reveal"><div class="ic">🆓</div><h3>Free &amp; gasless</h3><p>Sponsor-minted — no fees, no wallet popup. One per wallet. Only 2,000 will ever exist.</p></div>
+  </div>
+</div></section>
+
+<section id="how" style="background:#0a0f14;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+  <div class="eyebrow reveal">How it works</div>
+  <div class="h2 reveal">Three steps to <em>plant</em></div>
+  <div class="steps" style="margin-top:40px">
+    <div class="step reveal"><div class="num">01</div><h3>Paste your wallet</h3><p>Open to everyone — builders, the GenLayer community, and the public. One per wallet, until all 2,000 are gone.</p></div>
+    <div class="step reveal"><div class="num">02</div><h3>AI consensus reveals you</h3><p>GenLayer validators independently read your GitHub and agree on your builder DNA → your tree's species.</p></div>
+    <div class="step reveal"><div class="num">03</div><h3>It grows forever</h3><p>Your tree is planted on-chain and appears in the 3D garden, growing in real time. Visit it any time.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="onchain reveal">
+    <div class="eyebrow">Verifiable</div>
+    <div class="h2">Everything is <em>on-chain</em></div>
+    <p class="ssub" style="margin-bottom:0">The species, the artwork, the growth, the prices and the clock — all decided by GenLayer validator consensus. See it yourself.</p>
+    <div class="addr" id="addr">…</div>
+    <div class="btns" style="justify-content:center">
+      <a class="btn s" id="explorer" href="#" target="_blank">View contract on GenLayer Explorer ↗</a>
+      <a class="btn s" href="/garden3d/">Walk the garden ↗</a>
+    </div>
+  </div>
+</div></section>
+
+<section id="faq" style="background:#0a0f14;border-top:1px solid var(--line)"><div class="wrap">
+  <div class="eyebrow reveal">FAQ</div>
+  <div class="h2 reveal" style="margin-bottom:36px">Questions</div>
+  <div class="faq">
+    <details class="q reveal"><summary>What is Consensus Garden? <span class="pl">+</span></summary><div class="a">A 2,000-supply, fully on-chain NFT collection on GenLayer. Each token is a living tree forged from a builder's GitHub identity and grown over real time — explorable in a 3D world.</div></details>
+    <details class="q reveal"><summary>Why is this only possible on GenLayer? <span class="pl">+</span></summary><div class="a">GenLayer contracts can fetch the live web and run AI, then validators reach <b>consensus</b> on the result — trustlessly, with no oracle. That's how the tree reads your GitHub, knows the real-world time, and shows live prices. A normal EVM chain cannot do any of this on-chain.</div></details>
+    <details class="q reveal"><summary>Is it really free? <span class="pl">+</span></summary><div class="a">Yes — gasless. A sponsor wallet mints your tree for you, so there's no fee and no wallet popup. One tree per wallet.</div></details>
+    <details class="q reveal"><summary>Who can mint, and when? <span class="pl">+</span></summary><div class="a">Open to <b>everyone</b> right now — GenLayer builders, the community, and the public. One tree per wallet, free and gasless, until all 2,000 are planted.</div></details>
+    <details class="q reveal"><summary>Does the tree actually grow? <span class="pl">+</span></summary><div class="a">Yes. Growth is computed from GenLayer's on-chain clock — seedling within an hour, sapling in a day, mature in about a month, then it keeps slowly aging. It outlives the session.</div></details>
+    <details class="q reveal"><summary>Is the art AI-generated? <span class="pl">+</span></summary><div class="a">No. The art is a deterministic generative algorithm rendered on-chain — no diffusion, no “AI slop”. AI is used only to <i>judge your identity</i> (which species you get), never to draw the image.</div></details>
+    <details class="q reveal"><summary>Where do I see my NFT? <span class="pl">+</span></summary><div class="a">In the 3D garden, in a dedicated spinnable 3D viewer, and on the GenLayer explorer — the same tree from the same on-chain DNA.</div></details>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="fl"><a href="/mint/">Mint</a><a href="/garden3d/">Garden</a><a id="fexp" href="#" target="_blank">Explorer</a><a href="#faq">FAQ</a><a href="https://github.com/YoneCode/Consensus-Garden" target="_blank" rel="noopener">GitHub</a><a href="https://x.com/YoneCode" target="_blank" rel="noopener">X</a><a href="https://genlayer.com" target="_blank">GenLayer</a></div>
+  <div class="mono" style="font-size:11px;letter-spacing:.14em">CONSENSUS GARDEN · ON-CHAIN · GENLAYER TESTNET BRADBURY</div>
+</div></footer>
+
+<script>
+  // keyword marquee (duplicated for seamless loop)
+  const kws=['On-chain','AI consensus','Living NFTs','Real-world synced','2000 only','Free mint','GenLayer Intelligent Contracts','Generative art','Multiplayer','Proof of Build'];
+  const row=kws.map(k=>'<span><b>·</b> '+k+'</span>').join('');
+  document.getElementById('marq').innerHTML=row+row;
+  // live stats
+  fetch('/api/stats').then(r=>r.json()).then(s=>{
+    document.getElementById('cMint').textContent=s.minted;
+    const ex='https://explorer-bradbury.genlayer.com/address/'+(s.contract||'');
+    const a=document.getElementById('addr');if(a)a.textContent=s.contract||'';
+    const e=document.getElementById('explorer');if(e)e.href=ex;
+    const f=document.getElementById('fexp');if(f)f.href=ex;
+    const mp=document.getElementById('mPhase');if(mp)mp.textContent=s.phaseOpen?'Open mint — everyone.':'Phase 1: builders only.';
+  }).catch(()=>{});
+  // scroll reveal
+  const io=new IntersectionObserver((es)=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  // on-page mint
+  const mw=document.getElementById('mw'),mc=document.getElementById('mCheck'),mm=document.getElementById('mMint'),mmsg=document.getElementById('mMsg'),mlinks=document.getElementById('mLinks');
+  const mshow=(c,h)=>{mmsg.className='mmsg on '+c;mmsg.innerHTML=h;};
+  mc.onclick=async()=>{const a=mw.value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(a)){mshow('no','That doesn’t look like a wallet address.');return;}
+    mc.disabled=true;mc.textContent='Checking…';mlinks.className='mlinks';mm.style.display='none';
+    try{const d=await (await fetch('/api/eligibility/'+a)).json();
+      if(d.eligible){mshow('ok','✅ Eligible'+(d.tier==='builder'?(' — builder <b>'+(d.name||d.github||'')+'</b> · '+(d.github||'')):' · open mint')+'.');mm.style.display='block';}
+      else mshow('info','⏳ '+(d.reason||'Not eligible yet.'));}catch(e){mshow('no','Couldn’t reach the server.');}
+    mc.disabled=false;mc.textContent='Check eligibility';};
+  mm.onclick=async()=>{const a=mw.value.trim();mm.disabled=true;mm.textContent='Planting…';mshow('info','🌱 Sponsor minting on-chain…');
+    try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:a})})).json();
+      if(d.ok||d.already){const id=d.tokenId;mshow('ok','🌳 '+(d.already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Species awakens shortly.');
+        mlinks.className='mlinks on';mlinks.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/?wallet='+a+'" target="_blank">Enter your garden ↗</a>';mm.textContent='Planted ✓';}
+      else{mshow('no','✗ '+(d.error||'Mint failed.'));mm.disabled=false;mm.textContent='Plant my tree (free)';}}catch(e){mshow('no','Mint request failed.');mm.disabled=false;mm.textContent='Plant my tree (free)';}};
+</script>
+</body></html>
