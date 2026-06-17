@@ -249,7 +249,7 @@
   function mintDone(id,a,already,tx){
     mshow('ok','🌳 '+(already?'You already have <b>Tree #'+id+'</b>':'Planted! <b>Tree #'+id+'</b> is on-chain')+'. Its species is forged from your GitHub by AI consensus.');
     mlinks.className='mlinks on';
-    let h='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/?wallet='+a+'" target="_blank">Enter your garden ↗</a>';
+    let h='<a href="/nft/?id='+id+'" target="_blank">View your 3D NFT ↗</a><a href="/garden3d/" target="_blank">Enter the garden ↗</a>';
     if(tx)h+='<a href="https://explorer-bradbury.genlayer.com/tx/'+tx+'" target="_blank">View mint transaction ↗</a>';
     mlinks.innerHTML=h;
     mm.textContent='Planted ✓';

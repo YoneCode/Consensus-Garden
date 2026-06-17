@@ -114,9 +114,8 @@ checkBtn.onclick=async()=>{
 function mintDone(id,addr,already,tx){
   show('ok','🌳 '+(already?'You already have <b>Tree #'+id+'</b>':'Planted! <b>Tree #'+id+'</b> is on-chain')+'. Its species is forged from your GitHub by AI consensus.');
   links.className='links on';
-  let h='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a>';
+  let h='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/" target="_blank">Enter the garden ↗</a>';
   if(tx)h+='<a href="https://explorer-bradbury.genlayer.com/tx/'+tx+'" target="_blank">View mint transaction ↗</a>';
-  h+='<a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
   links.innerHTML=h;
   mintBtn.textContent='Planted ✓';loadStats();
 }
