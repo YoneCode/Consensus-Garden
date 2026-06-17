@@ -18,6 +18,12 @@ A generative NFT dApp that is only possible on **GenLayer**.
 
 </div>
 
+<div align="center">
+
+<a href="https://consensus-garden.pages.dev"><img src="media/garden.gif" width="100%" alt="Consensus Garden — a walkable, fully on-chain 3D garden (click for the live dApp)" /></a>
+
+</div>
+
 ---
 
 ## 📊 On-chain
