@@ -3,6 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Consensus Garden · GenLayer</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script>if(new URLSearchParams(location.search).has('cinematic'))document.documentElement.classList.add('cine');</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#1a1a1a;--green:#3a7d4e;--mut:#8a8470;--mono:'IBM Plex Mono',ui-monospace,monospace}
@@ -47,7 +48,7 @@
   #ehint{position:fixed;left:50%;top:57%;transform:translateX(-50%);z-index:5;display:none;
     font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:#0009;padding:7px 12px;border-radius:8px}
   #ehint.on{display:block}
-  body.cine #intro,body.cine #hud,body.cine #xhair,body.cine #ehint,body.cine #inspect,body.cine #vignette{display:none!important}
+  .cine #intro,.cine #hud,.cine #xhair,.cine #ehint,.cine #inspect,.cine #vignette{display:none!important}
 </style></head>
 <body>
 <canvas id="scene"></canvas>
