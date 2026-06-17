@@ -111,17 +111,20 @@ checkBtn.onclick=async()=>{
   }catch(e){show('no','Couldn’t reach the server. Please try again in a moment.');}
   checkBtn.disabled=false;checkBtn.textContent='Check eligibility';
 };
-function mintDone(id,addr,already){
-  show('ok','🌳 '+(already?'You already have tree':'Planted! Tree')+' <b>#'+id+'</b>. Its species awakens shortly via AI consensus.');
+function mintDone(id,addr,already,tx){
+  show('ok','🌳 '+(already?'You already have <b>Tree #'+id+'</b>':'Planted! <b>Tree #'+id+'</b> is on-chain')+'. Its species is forged from your GitHub by AI consensus.');
   links.className='links on';
-  links.innerHTML='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a><a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
+  let h='<a href="/nft/?id='+id+'" target="_blank">View your living NFT (3D) ↗</a><a href="/garden3d/?wallet='+addr+'" target="_blank">Enter your garden ↗</a>';
+  if(tx)h+='<a href="https://explorer-bradbury.genlayer.com/tx/'+tx+'" target="_blank">View mint transaction ↗</a>';
+  h+='<a href="/garden3d/" target="_blank">Visit the public garden ↗</a>';
+  links.innerHTML=h;
   mintBtn.textContent='Planted ✓';loadStats();
 }
-async function pollTree(addr){
+async function pollTree(addr,tx){
   for(let i=0;i<100;i++){
     await new Promise(r=>setTimeout(r,5000));
     try{const t=await (await fetch('/api/tokens/'+addr)).json();
-      if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,addr,false);return;}}catch(e){}
+      if(t.tokens&&t.tokens.length){mintDone(t.tokens[0].id,addr,false,tx);return;}}catch(e){}
   }
   show('info','🌱 Your tree is planted on-chain — GenLayer is finishing consensus. It will appear in your garden shortly.');mintBtn.textContent='Planted ✓';
 }
@@ -129,9 +132,9 @@ mintBtn.onclick=async()=>{
   const addr=w.value.trim();
   mintBtn.disabled=true;mintBtn.textContent='Planting…';show('info','🌱 Sponsor minting your tree on-chain — a few seconds…');
   try{const d=await (await fetch('/api/mint',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({wallet:addr})})).json();
-    if(d.already){mintDone(d.tokenId,addr,true);
+    if(d.already){mintDone(d.tokenId,addr,true,d.tx);
     }else if(d.soldOut){applySoldOut();
-    }else if(d.ok){show('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(addr);
+    }else if(d.ok){show('info','🌱 Planted on-chain! Waking your tree via GenLayer consensus — this can take a few minutes. Keep this page open…');pollTree(addr,d.tx);
     }else{show('no','✗ '+(d.error||'Mint failed.'));mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
   }catch(e){show('no','Mint request failed.');mintBtn.disabled=false;mintBtn.textContent='Plant my tree (free)';}
 };
