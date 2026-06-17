@@ -429,7 +429,7 @@ function ridge(dist,baseH,amp,color){const SEG=160,v=new Float32Array(SEG*2*3),i
     const j=(i+1)%SEG;idx.push(i*2,j*2,i*2+1,i*2+1,j*2,j*2+1)}
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(v,3));geo.setIndex(idx);
   scene.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,fog:false})))}
-ridge(82,16,6,0x8fa183); ridge(102,26,9,0xa7b598); ridge(124,36,12,0xc2cdb4);
+ridge(82,16,6,0x323d47); ridge(102,26,9,0x3f4b56); ridge(124,36,12,0x4c5965);
 
 /* ════════ STAGE 3: clouds · stars · moon · day–night ════════ */
 const cloudMat=new THREE.MeshLambertMaterial({color:0xffffff,emissive:0x99a3b0,emissiveIntensity:0.7,transparent:true,opacity:0.92});
