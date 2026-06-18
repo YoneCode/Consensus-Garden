@@ -32,8 +32,8 @@ Every tree's species, its artwork, its growth, the live market prices and the wo
 
 | | |
 |---|---|
-| **ConsensusGarden** (NFT) | [`0xeA46E03C1c0aE3a1D3c93b98EF2d99915BD393A6`](https://explorer-bradbury.genlayer.com/address/0xeA46E03C1c0aE3a1D3c93b98EF2d99915BD393A6) |
-| **Deploy transaction** | [`0x687f67a2…7e97a1dd`](https://explorer-bradbury.genlayer.com/tx/0x687f67a22431adc579951f18fefe12abccb536960b0ab1b4fc8b86ec7e97a1dd) |
+| **ConsensusGarden** (NFT) | [`0x36d8223a5474041302e54a9fe81940a05B225be8`](https://explorer-bradbury.genlayer.com/address/0x36d8223a5474041302e54a9fe81940a05B225be8) |
+| **Deploy transaction** | [`0x838da9bd…b6cc1f46`](https://explorer-bradbury.genlayer.com/tx/0x838da9bd41219d70a19e0b78f831e2984e807bd7bd3d402c591ab706b6cc1f46) |
 | **WorldState** (prices + clock) | [`0xc96f863bb9C9e7C644F4a1b156A83c56740310D6`](https://explorer-bradbury.genlayer.com/address/0xc96f863bb9C9e7C644F4a1b156A83c56740310D6) |
 | **Network** | GenLayer Testnet Bradbury · chain `4221` |
 | **Supply** | 2,000 · one per wallet |
