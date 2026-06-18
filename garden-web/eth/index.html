@@ -7,10 +7,184 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<style>html,body{margin:0;background:#070b0f}</style>
-  <script type="module" crossorigin src="/eth/assets/index-CVSSffWV.js"></script>
+<style>
+  :root{ --bg:#070b0f; --ink:#eaf6ff; --mut:#8a98a8; --line:#ffffff14; --grn:#2f9e54; --grn2:#7ed957; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; background:var(--bg); }
+  body{ color:var(--ink); font-family:Inter,system-ui,sans-serif; min-height:100vh; overflow-x:hidden; }
+  .gframe{ position:fixed; inset:0; width:100%; height:100%; border:0; pointer-events:none; z-index:0; }
+  .scrim{ position:fixed; inset:0; z-index:1; background:radial-gradient(900px 600px at 50% 36%, rgba(7,11,15,.42), rgba(7,11,15,.93)); }
+  .wrap{ position:relative; z-index:2; max-width:480px; margin:0 auto; padding:44px 20px 72px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; }
+  .logo .dot{ width:24px; height:24px; border-radius:7px; background:linear-gradient(160deg,var(--grn2),var(--grn)); }
+  h1{ font-size:34px; margin:18px 0 8px; letter-spacing:-.5px; font-weight:700; line-height:1.12; }
+  h1 em{ font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-weight:600; color:var(--grn2); }
+  .sub{ color:var(--mut); margin:0 0 22px; font-size:14.5px; line-height:1.6; }
+  .panel{ background:rgba(13,20,27,.74); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.55); }
+  .stat{ display:flex; justify-content:space-between; color:var(--mut); font-size:13px; margin-bottom:14px; }
+  .step{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); }
+  .step span{ color:var(--mut); font-size:14px; } .ok{ color:var(--grn2); font-weight:600; }
+  button{ width:100%; border:0; border-radius:11px; padding:13px 16px; font-size:15px; font-weight:650; cursor:pointer; background:linear-gradient(160deg,var(--grn2),var(--grn)); color:#06140c; margin-top:12px; }
+  button:disabled{ opacity:.5; cursor:not-allowed; }
+  .mini{ width:auto; margin:0; padding:8px 14px; font-size:13px; border-radius:9px; }
+  .note{ margin-top:14px; font-size:13px; padding:11px 13px; border-radius:10px; background:#0a120e; border:1px solid var(--line); color:var(--mut); }
+  .note.ok{ color:var(--grn2); } .note.err{ color:#ff8a8a; }
+  .how{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; color:var(--mut); line-height:1.6; }
+  .how b{ color:var(--ink); }
+  .preview{ margin-top:18px; text-align:center; }
+  .preview img{ width:260px; border-radius:12px; border:1px solid var(--line); background:#000; }
+  .links{ display:flex; gap:10px; margin-top:14px; }
+  .links a{ flex:1; text-align:center; text-decoration:none; border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--ink); font-size:13px; }
+</style>
 </head>
 <body>
-<div id="root"></div>
+<iframe class="gframe" src="/garden3d/?cinematic=1" title="Consensus Garden"></iframe>
+<div class="scrim"></div>
+<div class="wrap">
+  <div class="logo"><span class="dot"></span> Consensus Garden</div>
+  <h1>Plant your <em>tree</em> on Ethereum</h1>
+  <p class="sub">A living, fully on-chain NFT. Your species is forged from your GitHub by GenLayer AI consensus. One per wallet, free (you pay only gas). Minting needs a connected GitHub at least 1 month old to keep bots out.</p>
+
+  <div class="panel">
+    <div class="stat"><span id="supply">supply —</span><span id="net">not connected</span></div>
+    <div id="flow"></div>
+    <div id="msg" class="note" style="display:none"></div>
+    <div id="preview" class="preview" style="display:none">
+      <img id="art" alt="your tree" />
+      <div class="links">
+        <a id="viewer" target="_blank" rel="noopener">3D viewer</a>
+        <a id="os" target="_blank" rel="noopener">OpenSea</a>
+      </div>
+    </div>
+    <div class="how"><b>How it works:</b> your mint lands on <b>Ethereum</b> instantly. Then <b>GenLayer</b> validators read your GitHub and reach <b>AI consensus</b> on your tree's species, then write it back to your NFT — usually within a few minutes. Your tree is live the whole time.</div>
+  </div>
+</div>
+
+<script type="module">
+import { createPublicClient, createWalletClient, custom, http, parseAbi } from "https://esm.sh/viem@2.21.54";
+import { mainnet } from "https://esm.sh/viem@2.21.54/chains";
+
+const GARDEN = "0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828";
+const RPC = "https://ethereum-rpc.publicnode.com";
+const VIEWER = "/nft/?id=";
+const ABI = parseAbi([
+  "function mint(string github, bytes signature) returns (uint256)",
+  "function tokenOf(address) view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
+  "function CAP() view returns (uint256)",
+  "function tokenURI(uint256) view returns (string)",
+]);
+const $ = (id) => document.getElementById(id);
+const pub = createPublicClient({ chain: mainnet, transport: http(RPC) });
+
+let account = null, gh = null, ghSig = null, ghWallet = null, owned = 0, busy = false;
+
+function msg(t, cls){ const m=$("msg"); m.style.display="block"; m.className="note "+(cls||""); m.innerHTML=t; }
+
+(function readReturn(){
+  const q = new URLSearchParams(location.search);
+  if (q.get("error")) {
+    const e = q.get("error");
+    if (e === "github_too_new") msg(`Your GitHub (${q.get("github")||""}) is only ${q.get("ageDays")||"?"} days old — it must be at least a month old to mint.`, "err");
+    else msg("GitHub verification failed: " + e, "err");
+  }
+  if (q.get("sig") && q.get("github") && q.get("wallet")) {
+    ghSig = q.get("sig"); gh = q.get("github"); ghWallet = q.get("wallet").toLowerCase();
+  }
+  if (location.search) history.replaceState({}, "", "/eth/");
+})();
+
+async function refreshSupply(){
+  try {
+    const [tm, cap] = await Promise.all([
+      pub.readContract({ address: GARDEN, abi: ABI, functionName: "totalSupply" }),
+      pub.readContract({ address: GARDEN, abi: ABI, functionName: "CAP" }),
+    ]);
+    $("supply").textContent = `${tm} / ${cap} planted`;
+  } catch { $("supply").textContent = "supply —"; }
+}
+
+async function showToken(id){
+  try {
+    const uri = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenURI", args: [BigInt(id)] });
+    const json = JSON.parse(atob(uri.split(",")[1]));
+    $("art").src = json.image;
+    $("viewer").href = VIEWER + id;
+    $("os").href = `https://opensea.io/assets/ethereum/${GARDEN}/${id}`;
+    $("preview").style.display = "block";
+  } catch {}
+}
+
+async function ensureMainnet(eth){
+  const cid = await eth.request({ method: "eth_chainId" });
+  if (cid !== "0x1") await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x1" }] });
+}
+
+async function setAccount(addr){
+  account = addr.toLowerCase();
+  $("net").textContent = addr.slice(0,6)+"…"+addr.slice(-4);
+  try {
+    const id = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [account] });
+    owned = Number(id);
+    if (owned > 0) showToken(owned);
+  } catch {}
+  render();
+}
+
+async function connectWallet(){
+  const eth = window.ethereum;
+  if (!eth) { msg("No wallet found. Install MetaMask or Rabby.", "err"); return; }
+  try { const [a] = await eth.request({ method: "eth_requestAccounts" }); await ensureMainnet(eth); await setAccount(a); }
+  catch (e) { msg("Connection failed: " + (e.shortMessage||e.message), "err"); }
+}
+
+function verifyGithub(){
+  if (!account) { msg("Connect your wallet first.", "err"); return; }
+  location.href = "/api/github-login?wallet=" + account;
+}
+
+async function doMint(){
+  if (busy || !account || !gh || !ghSig) return;
+  if (ghWallet && account !== ghWallet) { msg(`That GitHub was verified for ${ghWallet.slice(0,6)}…${ghWallet.slice(-4)}. Connect that wallet, or re-verify GitHub with this one.`, "err"); return; }
+  busy = true; render(); msg("Confirm the mint in your wallet…");
+  try {
+    const eth = window.ethereum; await ensureMainnet(eth);
+    const wc = createWalletClient({ account, chain: mainnet, transport: custom(eth) });
+    const hash = await wc.writeContract({ address: GARDEN, abi: ABI, functionName: "mint", args: [gh, ghSig] });
+    msg("Planting… waiting for confirmation.");
+    await pub.waitForTransactionReceipt({ hash });
+    const id = Number(await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [account] }));
+    owned = id;
+    msg(`🌳 Planted tree #${id} — it's live on Ethereum now. GenLayer is forging your species; it updates on your NFT in a few minutes.`, "ok");
+    refreshSupply(); showToken(id); render();
+  } catch (e) {
+    msg("Mint failed: " + (e.shortMessage || e.message), "err");
+  } finally { busy = false; render(); }
+}
+
+function render(){
+  const f = $("flow");
+  if (owned > 0) {
+    f.innerHTML = `<div style="text-align:center;padding:6px 0 2px"><b class="ok" style="font-size:16px">🌳 This wallet already planted tree #${owned}</b><p style="color:var(--mut);font-size:13px;margin:8px 0 0">One tree per wallet — yours is below.</p></div>`;
+    return;
+  }
+  let h = "";
+  h += `<div class="step"><span>1 · Wallet</span>${account ? `<b class="ok">${account.slice(0,6)}…${account.slice(-4)} ✓</b>` : `<button class="mini" id="bW">Connect wallet</button>`}</div>`;
+  h += `<div class="step"><span>2 · GitHub</span>${gh ? `<b class="ok">${gh} ✓</b>` : `<button class="mini" id="bG" ${account?"":"disabled"}>Verify GitHub</button>`}</div>`;
+  const ready = account && gh && ghSig;
+  h += `<button id="bM" ${ready && !busy ? "" : "disabled"}>${busy ? "Working…" : !account ? "Connect your wallet" : !gh ? "Verify your GitHub" : "Plant my tree"}</button>`;
+  f.innerHTML = h;
+  if ($("bW")) $("bW").onclick = connectWallet;
+  if ($("bG")) $("bG").onclick = verifyGithub;
+  if ($("bM")) $("bM").onclick = doMint;
+}
+
+refreshSupply();
+render();
+if (window.ethereum) {
+  window.ethereum.request({ method: "eth_accounts" }).then((a) => { if (a && a[0]) setAccount(a[0]); }).catch(()=>{});
+  window.ethereum.on?.("accountsChanged", () => location.reload());
+}
+</script>
 </body>
 </html>
