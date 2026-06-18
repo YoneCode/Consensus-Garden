@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@privy-io/server-auth": "1.18.4",
     "genlayer-js": "1.1.8",
+    "jose": "5.9.6",
     "viem": "2.21.54"
   }
 }
