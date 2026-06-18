@@ -73,7 +73,7 @@ export default function App() {
     try {
       await wallet.switchChain(CHAIN.id);
       const token = await getAccessToken();
-      const r = await fetch(`${BACKEND}/sign`, {
+      const r = await fetch(BACKEND, {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ wallet: wallet.address, privyToken: token }),
       });

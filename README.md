@@ -4,134 +4,91 @@
 
 # Consensus Garden
 
-**2,000 living, fully on-chain NFTs — trees forged from a builder's real GitHub by decentralized AI consensus, grown over real time, and explorable in a walkable 3D world.**
+**Living, fully on-chain tree NFTs on Ethereum. Your species is forged from your real GitHub by GenLayer AI consensus, your tree grows over real time, and the art is rendered inside the contract.**
 
-A generative NFT dApp that is only possible on **GenLayer**.
+[![Ethereum](https://img.shields.io/badge/Ethereum-mainnet-2f9e54?style=flat-square)](https://etherscan.io/address/0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828)
+[![Mint](https://img.shields.io/badge/mint-free-7ed957?style=flat-square)](https://consensus-garden.pages.dev/eth)
+[![Supply](https://img.shields.io/badge/supply-1%2C000-7ed957?style=flat-square)](#mint)
+[![Art](https://img.shields.io/badge/art-100%25%20on--chain-2f9e54?style=flat-square)](#why-the-hybrid)
+[![Species](https://img.shields.io/badge/species-GenLayer%20AI-2f9e54?style=flat-square)](#why-the-hybrid)
+[![Anti-bot](https://img.shields.io/badge/anti--bot-GitHub%20gated-2f9e54?style=flat-square)](#anti-bot)
 
-[![Network](https://img.shields.io/badge/GenLayer-Testnet%20Bradbury-2f9e54?style=flat-square)](https://genlayer.com)
-[![Chain ID](https://img.shields.io/badge/chain%20id-4221-2f9e54?style=flat-square)](https://genlayer.com)
-[![Supply](https://img.shields.io/badge/supply-2%2C000-7ed957?style=flat-square)](#-on-chain)
-[![Mint](https://img.shields.io/badge/mint-free%20%C2%B7%20gasless-7ed957?style=flat-square)](#-how-it-works)
-[![Art](https://img.shields.io/badge/art-100%25%20on--chain-2f9e54?style=flat-square)](#-why-only-on-genlayer)
-[![Identity](https://img.shields.io/badge/identity-AI%20consensus-2f9e54?style=flat-square)](#-why-only-on-genlayer)
-[![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-555?style=flat-square)](#-license)
-
-</div>
-
-<div align="center">
-
-<a href="https://consensus-garden.pages.dev"><img src="media/garden.gif" width="100%" alt="Consensus Garden — a walkable, fully on-chain 3D garden (click for the live dApp)" /></a>
+[**Mint on Ethereum →**](https://consensus-garden.pages.dev/eth)
 
 </div>
 
 ---
 
-## 📊 On-chain
+## What it is
 
-Every tree's species, its artwork, its growth, the live market prices and the world clock are all decided by **GenLayer validator consensus** — no oracle, no off-chain server, no IPFS.
+Connect your wallet, connect your GitHub, and plant a tree. **GenLayer** reads your public GitHub, reaches **AI consensus** on your dominant language, and that decides your tree's **species**. The tree is **rendered entirely on-chain** as generative SVG and **grows over real time** from seedling to a mature, blossoming tree. Every tree also lives in a walkable 3D garden.
+
+- **Free mint on Ethereum** — one tree per wallet, you pay only gas (cents at current fees).
+- **Species from your GitHub** — judged by GenLayer AI consensus, not a server. Fair: it reads identity, never a score.
+- **100% on-chain art** — the SVG is computed inside the contract. No IPFS, no off-chain image.
+- **Grows forever** — the tree keeps aging from `block.timestamp` after you log off.
+
+## Mint
+
+1. **Connect** your wallet and your GitHub (one click each, in any order).
+2. **Plant** — the mint is free (you pay gas).
+3. **GenLayer forges your species** from your GitHub and writes it to your NFT.
+
+> Mint: https://consensus-garden.pages.dev/eth
+
+## Why the hybrid
+
+The NFT lives on **Ethereum** (stable, liquid, tradeable on every marketplace). The **brain** lives on **GenLayer** — the one chain whose contracts can fetch the live web and run AI with validator consensus, on-chain. Neither chain can do the other's job:
+
+- **Ethereum** holds the token, the on-chain art, the real-time growth, and ownership.
+- **GenLayer** reads your GitHub and reaches **trustless AI consensus** on your species.
+- A relayer carries GenLayer's agreed result onto the Ethereum NFT.
+
+A normal EVM contract cannot read GitHub or run AI on-chain. That decision is what GenLayer makes trustless — and what makes this collection only possible with both chains.
+
+## Anti-bot
+
+Minting requires a **connected GitHub account that is at least 1 month old**. A backend reads the OAuth-verified handle, checks the account age, and signs an EIP-712 attestation; the contract verifies that signature on mint. No real, aged GitHub → no signature → no mint. Combined with one-per-wallet, that keeps the garden human.
+
+## On-chain
 
 | | |
 |---|---|
-| **ConsensusGarden** (NFT) | [`0x36d8223a5474041302e54a9fe81940a05B225be8`](https://explorer-bradbury.genlayer.com/address/0x36d8223a5474041302e54a9fe81940a05B225be8) |
-| **Deploy transaction** | [`0x838da9bd…b6cc1f46`](https://explorer-bradbury.genlayer.com/tx/0x838da9bd41219d70a19e0b78f831e2984e807bd7bd3d402c591ab706b6cc1f46) |
-| **WorldState** (prices + clock) | [`0xc96f863bb9C9e7C644F4a1b156A83c56740310D6`](https://explorer-bradbury.genlayer.com/address/0xc96f863bb9C9e7C644F4a1b156A83c56740310D6) |
-| **Network** | GenLayer Testnet Bradbury · chain `4221` |
-| **Supply** | 2,000 · one per wallet |
-| **Mint** | Free · gasless (sponsor-paid) |
+| **ConsensusGarden** (Ethereum) | [`0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828`](https://etherscan.io/address/0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828) |
+| **SpeciesOracle** (GenLayer) | `0x6EdA972ebbf81adc4F76df8e7D17A935Bee5bEad` |
+| **Supply** | 1,000 · one per wallet |
+| **Mint** | Free (pay gas) |
+| **Art** | 100% on-chain SVG + walkable 3D viewer |
 
-> Live mint count, owners and per-tree DNA are read directly from the contract through the dApp's `/api/stats` and `/api/tokens` endpoints.
-
----
-
-## 🌳 What it is
-
-Consensus Garden turns your work as a builder into a **living artifact**.
-
-When you mint, GenLayer validators independently read your **public GitHub**, reach **AI consensus** on your "builder DNA", and that agreement sets your tree's **species**. The tree is then rendered **entirely inside the contract** as generative vector art, and it **grows over real time** — from seedling to a mature, blossoming tree — driven by GenLayer's on-chain clock. You can walk through the whole collection in a first-person 3D Japanese temple garden.
-
-No AI image generation. No "AI slop". The artwork is a deterministic algorithm; AI is used **only to judge identity**, never to draw.
-
----
-
-## ⚡ Why only on GenLayer
-
-GenLayer's Intelligent Contracts can **fetch the live web** and **run AI**, then have validators reach **consensus** on the result — trustlessly. Consensus Garden uses every one of those superpowers on-chain:
-
-- **AI consensus on identity** — validators read your GitHub and agree on your species. Fair: it reads identity, never a "score".
-- **Consensus web access** — live ETH/BTC prices fetched and agreed on-chain, shown on the garden's billboards. No oracle.
-- **Deterministic consensus clock** — a wall-clock time every validator agrees on, which both ages your tree and drives the garden's day/night cycle.
-- **Fully on-chain generative art** — the SVG is computed in the contract; the NFT needs no external storage.
-
-A normal EVM chain cannot do any of these on-chain.
-
----
-
-## ✨ Features
-
-- **Living, growing NFTs** — real-time growth from the on-chain clock; trees keep aging after you log off.
-- **GitHub → species via AI consensus** — your identity, judged fairly by validators at mint.
-- **100% on-chain art** — generative SVG rendered in the contract.
-- **Walkable 3D garden** — temple, pagoda, koi pond, taiko bridge, real-time day/night, wildlife, and a 3D tree for every minted token.
-- **Multiplayer** — see other builders live, global chat, presence count.
-- **Real-world billboards** — consensus prices and a consensus UTC clock, in-world.
-- **Free & gasless mint** — sponsor-paid, one per wallet, capped at 2,000.
-
----
-
-## 🔭 How it works
-
-1. **Paste your wallet** — open to everyone: builders, the GenLayer community and the public, until all 2,000 are planted.
-2. **AI consensus reveals you** — validators read your GitHub and agree on your builder DNA → your tree's species.
-3. **It grows forever** — your tree is planted on-chain and appears in the 3D garden, aging in real time.
-
----
-
-## 🧱 Tech stack
+## Tech stack
 
 | Layer | Tech |
 |---|---|
-| Smart contracts | GenLayer Intelligent Contracts (Python / GenVM) |
-| On-chain AI + web | `gl.nondet.exec_prompt`, `gl.nondet.web.get`, validator consensus |
-| 3D world & art | three.js (WebGL), procedural L-system trees, generative SVG |
-| Multiplayer | Supabase Realtime (presence + chat) |
-| Backend | Node.js — gasless sponsor-mint API + live on-chain reads |
+| NFT | Solidity ERC-721, on-chain generative SVG, real-time growth |
+| Species brain | GenLayer Intelligent Contract — `gl.nondet.web.get` + `gl.nondet.exec_prompt` + validator consensus |
+| Anti-bot | Privy (wallet + GitHub OAuth), EIP-712 signed mint, GitHub age gate |
+| Relayer | Node keeper: watches `Planted` on Ethereum → resolves species on GenLayer → `reveal()` on Ethereum |
+| Front-end | React + viem; 3D garden in three.js |
 
----
-
-## 📁 Repository
+## Repository
 
 ```
-contracts/        GenLayer Intelligent Contracts
-  consensus_garden.py   living-tree NFT: mint, AI reveal, on-chain SVG, growth
-  world_state.py        consensus prices + deterministic on-chain clock
-garden-web/       the dApp (static front-end)
-  index.html            landing page (live cinematic garden hero + mint)
-  garden3d/             walkable 3D multiplayer garden
-  nft/                  per-token 3D NFT viewer
-  mint/                 gasless mint page
-deploy/           Node backend + scripts
-  server.mjs            serves garden-web + gasless mint / live token APIs
-  deploy_garden.mjs     deploy + mint + reveal the NFT contract
-  deploy_world.mjs      deploy WorldState (prices + clock)
-  reveal_keeper.mjs     auto-reveals new trees (GitHub → AI consensus)
-  snapshot_*.mjs        cache on-chain tokens / world state for the front-end
+eth/
+  src/ConsensusGarden.sol    ERC-721: free mint, on-chain SVG, growth, signed-mint gate, relayer reveal
+  src/TreeRenderer.sol       the on-chain renderer (byte-identical port, 960-case verified)
+  app/                       Privy mint front-end (wallet + GitHub)
+  backend/sign.mjs           local attestor (GitHub age check + EIP-712 sign)
+  relayer/relayer.mjs        GenLayer -> Ethereum species relayer
+  test/                      forge tests + 1:1 renderer verification
+contracts/
+  species_oracle.py          GenLayer: GitHub -> AI-consensus species
+functions/api/sign-mint.js   the attestor as a Cloudflare Pages Function
+garden-web/                  landing + walkable 3D garden (eth/ = the mint app)
 ```
 
-The API: `GET /api/stats`, `GET /api/eligibility/:wallet`, `GET /api/tokens`, `GET /api/tokens/:wallet`, `POST /api/mint`. Minting submits the sponsor transaction and the page polls until the tree is planted; the species reveal (GitHub → AI consensus) is triggered automatically.
+## License
 
-**Local development**
-
-```bash
-cd deploy && npm install
-cp ../.env.example ../.env   # add your sponsor DEPLOYER_PRIVATE_KEY
-node server.mjs              # serves the dApp + API on port 3000
-```
-
----
-
-## 🔒 License
-
-© 2026 **YoneCode**. All rights reserved. This project and its artwork may not be copied, redistributed or reused without permission.
+© 2026 **YoneCode**. All rights reserved.
 
 <div align="center">
 
