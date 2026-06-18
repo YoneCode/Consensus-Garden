@@ -29,6 +29,14 @@ export async function onRequestPost({ request, env }) {
   try { minted = Number(await rd(client, "total_minted", [])); } catch (e) {}
   if (minted >= SUPPLY) return json({ soldOut: true, error: "Sold out — all 2,000 trees are planted." });
 
+  // pace: ~1 mint per 18s across ALL requests (KV gate) so we never burst GenLayer's per-wallet rate limit
+  try {
+    const last = Number((await env.TOKENS.get("mint_gate")) || 0);
+    const now = Date.now();
+    if (now - last < 18000) return json({ busy: true, wait: Math.ceil((18000 - (now - last)) / 1000) });
+    await env.TOKENS.put("mint_gate", String(now));
+  } catch (e) {}
+
   // submit (do not wait for the receipt); retry once to absorb transient testnet reverts
   const wc = writeClient(pk);
   let tx, lastErr;

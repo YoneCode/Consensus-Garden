@@ -190,6 +190,24 @@ class ConsensusGarden(gl.Contract):
         self.t_dna[tid] = ""
         self.total = tid
 
+    @gl.public.write
+    def mint_self(self, github: str) -> None:
+        # caller mints their OWN tree (pays their own gas) — distributes load, no sponsor needed
+        to = str(gl.message.sender_address)
+        addr = Address(to)
+        if int(self.minted.get(addr, u256(0))) != 0:
+            raise gl.vm.UserError("wallet already minted")
+        if int(self.total) >= int(self.cap):
+            raise gl.vm.UserError("sold out")
+        tid = u256(int(self.total) + 1)
+        self.token_owner[tid] = to
+        self.minted[addr] = u256(int(tid))
+        self.t_mint[tid] = u256(int(datetime.now(timezone.utc).timestamp()))
+        self.t_seed[tid] = u256(_seed(to))
+        self.t_github[tid] = github
+        self.t_dna[tid] = ""
+        self.total = tid
+
     @gl.public.view
     def total_minted(self) -> u256:
         return self.total

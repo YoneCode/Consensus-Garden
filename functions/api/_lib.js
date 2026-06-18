@@ -3,7 +3,7 @@ import { createClient, createAccount } from "genlayer-js";
 import { testnetBradbury } from "genlayer-js/chains";
 import labels from "./_labels.json";
 
-export const CONTRACT = "0xeA46E03C1c0aE3a1D3c93b98EF2d99915BD393A6";
+export const CONTRACT = "0x36d8223a5474041302e54a9fe81940a05B225be8";
 export const SUPPLY = 2000;
 
 // curated display label override (does NOT change on-chain data) — e.g. founder tree
