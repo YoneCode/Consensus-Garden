@@ -20,8 +20,8 @@ const ABI = parseAbi([
 const pub = createPublicClient({ chain: CHAIN, transport: http(RPC) });
 
 const C = {
-  bg: "#0a0f0c", panel: "#0f1713", line: "#1c2a22", ink: "#e8f0ea",
-  mut: "#8aa294", grn: "#2f9e54", grn2: "#7ed957",
+  bg: "#070b0f", panel: "#0d141b", line: "#ffffff14", ink: "#eaf6ff",
+  mut: "#8a98a8", grn: "#2f9e54", grn2: "#7ed957",
 };
 
 export default function App() {
@@ -94,19 +94,21 @@ export default function App() {
     } finally { setBusy(false); }
   }
 
-  const box = { background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: 22 };
+  const box = { background: "rgba(13,20,27,.74)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, boxShadow: "0 24px 70px rgba(0,0,0,.55)" };
   const btn = { width: "100%", border: 0, borderRadius: 11, padding: "13px 16px", fontSize: 15, fontWeight: 650, cursor: "pointer", background: `linear-gradient(160deg,${C.grn2},${C.grn})`, color: "#06140c", marginTop: 12 };
   const miniBtn = { border: 0, borderRadius: 9, padding: "8px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer", background: `linear-gradient(160deg,${C.grn2},${C.grn})`, color: "#06140c" };
 
   return (
-    <div style={{ minHeight: "100vh", background: `radial-gradient(1200px 700px at 50% -10%,#10231a 0%,${C.bg} 60%)`, color: C.ink, fontFamily: "ui-sans-serif,system-ui,sans-serif" }}>
-      <div style={{ maxWidth: 560, margin: "0 auto", padding: "48px 20px 80px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700 }}>
-          <span style={{ width: 26, height: 26, borderRadius: 7, background: `linear-gradient(160deg,${C.grn2},${C.grn})` }} /> Consensus Garden
+    <div style={{ minHeight: "100vh", color: C.ink, fontFamily: "Inter,system-ui,sans-serif", position: "relative", overflow: "hidden" }}>
+      <iframe src="/garden3d/?cinematic=1" title="Consensus Garden" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", border: 0, pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, zIndex: 1, background: "radial-gradient(900px 600px at 50% 36%, rgba(7,11,15,.42), rgba(7,11,15,.93))" }} />
+      <div style={{ position: "relative", zIndex: 2, maxWidth: 480, margin: "0 auto", padding: "44px 20px 72px", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700, fontSize: 14, letterSpacing: ".2px" }}>
+          <span style={{ width: 24, height: 24, borderRadius: 7, background: `linear-gradient(160deg,${C.grn2},${C.grn})` }} /> Consensus Garden
         </div>
-        <h1 style={{ fontSize: 30, margin: "26px 0 6px", letterSpacing: "-.5px" }}>Plant your tree on Ethereum</h1>
-        <p style={{ color: C.mut, margin: "0 0 24px" }}>
-          A living, fully on-chain NFT. Your species is forged from your GitHub by GenLayer AI consensus. One per wallet, free (you pay only gas). To keep bots out, minting requires a connected GitHub at least 1 month old.
+        <h1 style={{ fontSize: 34, margin: "18px 0 8px", letterSpacing: "-.5px", fontWeight: 700, lineHeight: 1.12 }}>Plant your <em style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontStyle: "italic", fontWeight: 600, color: C.grn2 }}>tree</em> on Ethereum</h1>
+        <p style={{ color: C.mut, margin: "0 0 22px", fontSize: 14.5, lineHeight: 1.6 }}>
+          A living, fully on-chain NFT. Your species is forged from your GitHub by GenLayer AI consensus. One per wallet, free (you pay only gas). Minting needs a connected GitHub at least 1 month old to keep bots out.
         </p>
 
         <div style={box}>
