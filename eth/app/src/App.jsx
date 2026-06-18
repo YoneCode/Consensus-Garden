@@ -32,6 +32,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [art, setArt] = useState(null);
   const [tokenId, setTokenId] = useState(null);
+  const [owned, setOwned] = useState(0);
 
   const github = user?.github?.username || user?.github?.subject || null;
   const wallet = wallets?.[0] || null;
@@ -61,7 +62,7 @@ export default function App() {
     (async () => {
       if (wallet?.address) {
         const id = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [wallet.address] });
-        if (id > 0n) { setMsg({ t: `You already have tree #${id}.`, ok: true }); showToken(id); }
+        if (id > 0n) { setOwned(Number(id)); showToken(id); }
       }
     })();
   }, [wallet?.address]);
@@ -87,7 +88,8 @@ export default function App() {
       setMsg({ t: `Planting… waiting for confirmation.` });
       await pub.waitForTransactionReceipt({ hash });
       const id = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [wallet.address] });
-      setMsg({ t: `🌳 Planted tree #${id}! GenLayer is forging your species now.`, ok: true });
+      setOwned(Number(id));
+      setMsg({ t: `🌳 Planted tree #${id} — it's live on Ethereum now. GenLayer validators are reading your GitHub and reaching AI consensus on your species; it writes to your NFT automatically in a few minutes. Until then your tree shows a provisional species.`, ok: true });
       showToken(id);
     } catch (e) {
       setMsg({ t: "Mint failed: " + (e.shortMessage || e.message), ok: false });
@@ -123,7 +125,17 @@ export default function App() {
             <button style={btn} onClick={login}>Connect wallet + GitHub</button>
           )}
 
-          {ready && authenticated && (
+          {ready && authenticated && owned > 0 && (
+            <>
+              <div style={{ textAlign: "center", padding: "6px 0 2px" }}>
+                <b style={{ color: C.grn2, fontSize: 16 }}>🌳 This wallet already planted tree #{owned}</b>
+                <p style={{ color: C.mut, fontSize: 13, margin: "8px 0 0" }}>One tree per wallet — yours is below.</p>
+              </div>
+              <button style={{ ...btn, background: "transparent", border: `1px solid ${C.line}`, color: C.mut, fontWeight: 500 }} onClick={logout}>Disconnect</button>
+            </>
+          )}
+
+          {ready && authenticated && owned === 0 && (
             <>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${C.line}` }}>
                 <span style={{ color: C.mut, fontSize: 14 }}>1 · GitHub</span>
@@ -159,6 +171,10 @@ export default function App() {
               </div>
             </div>
           )}
+
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.mut, lineHeight: 1.6 }}>
+            <b style={{ color: C.ink }}>How it works:</b> your mint lands on <b style={{ color: C.ink }}>Ethereum</b> instantly. Then <b style={{ color: C.ink }}>GenLayer</b> validators read your GitHub and reach <b style={{ color: C.ink }}>AI consensus</b> on your tree's species, then write it back to your NFT — usually within a few minutes. Your tree is live the whole time; the species sharpens from provisional to GitHub-forged once consensus finalizes.
+          </div>
         </div>
       </div>
     </div>
