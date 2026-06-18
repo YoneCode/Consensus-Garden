@@ -1,0 +1,16 @@
+# forge
+out/
+cache/
+broadcast/
+lib/
+
+# node
+node_modules/
+dist/
+
+# secrets / local
+.env
+.env.*
+*.key
+*.key.json
+relayer.state.json

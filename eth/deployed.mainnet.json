@@ -1,0 +1,12 @@
+{
+  "network": "mainnet",
+  "chainId": 1,
+  "contract": "0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828",
+  "deployTx": "0xb31f11cf68ac3ab94740e868c709a4b5d279f4ff41619aae33d91a982f2af0c1",
+  "owner": "0x782870DE1830bbDf829406D47bB1688cFD2BA920",
+  "relayer": "0x782870DE1830bbDf829406D47bB1688cFD2BA920",
+  "signer": "0x817D885219fe80AC26885f57FD6403D043478c3e",
+  "oracle_genlayer": "0x6EdA972ebbf81adc4F76df8e7D17A935Bee5bEad",
+  "cap": 1000,
+  "explorer": "https://etherscan.io/address/0x96C1d7e87854d833e96E1cFfF4E4CF8E1896B828"
+}

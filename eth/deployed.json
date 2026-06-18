@@ -1,0 +1,14 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contract": "0x78832F0912808c56139264cA0316e48566B9791A",
+  "deployTx": "0xe8b66600aa2004a6bcf55f84304233fb6adbecea34d3f8347558fba13e68de9b",
+  "deployer": "0x782870DE1830bbDf829406D47bB1688cFD2BA920",
+  "relayer": "0x782870DE1830bbDf829406D47bB1688cFD2BA920",
+  "baseViewer": "https://consensus-garden.pages.dev/nft/?id=",
+  "cap": 1000,
+  "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
+  "explorer": "https://sepolia.etherscan.io/address/0x78832F0912808c56139264cA0316e48566B9791A",
+  "verified_onchain_1to1": true,
+  "note": "Art proven byte-identical on-chain (token #1, 946 bytes). 960-case forge harness: 0 mismatches."
+}

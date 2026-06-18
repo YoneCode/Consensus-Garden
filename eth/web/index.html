@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Consensus Garden · mint on Ethereum</title>
+<style>
+  :root{ --bg:#0a0f0c; --panel:#0f1713; --line:#1c2a22; --ink:#e8f0ea; --mut:#8aa294; --grn:#2f9e54; --grn2:#7ed957; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:radial-gradient(1200px 700px at 50% -10%,#10231a 0%,var(--bg) 60%); color:var(--ink); font:15px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; min-height:100vh; }
+  .wrap{ max-width:560px; margin:0 auto; padding:48px 20px 80px; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px; }
+  .logo .dot{ width:26px; height:26px; border-radius:7px; background:linear-gradient(160deg,var(--grn2),var(--grn)); }
+  h1{ font-size:30px; margin:26px 0 6px; letter-spacing:-.5px; }
+  .sub{ color:var(--mut); margin:0 0 24px; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; }
+  .row{ margin:14px 0; }
+  label{ display:block; font-size:13px; color:var(--mut); margin-bottom:6px; }
+  input{ width:100%; background:#0a120e; border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:12px 14px; font-size:15px; outline:none; }
+  input:focus{ border-color:var(--grn); }
+  button{ width:100%; border:0; border-radius:11px; padding:13px 16px; font-size:15px; font-weight:650; cursor:pointer; background:linear-gradient(160deg,var(--grn2),var(--grn)); color:#06140c; }
+  button:disabled{ opacity:.5; cursor:not-allowed; }
+  .stat{ display:flex; justify-content:space-between; color:var(--mut); font-size:13px; margin-bottom:14px; }
+  .note{ font-size:12.5px; color:var(--mut); background:#0a120e; border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-top:14px; }
+  .ok{ color:var(--grn2); } .err{ color:#ff8080; }
+  a{ color:var(--grn2); }
+  .preview{ margin-top:18px; text-align:center; }
+  .preview img{ width:260px; height:auto; border-radius:12px; border:1px solid var(--line); background:#000; }
+  .links{ display:flex; gap:10px; margin-top:14px; }
+  .links a{ flex:1; text-align:center; text-decoration:none; border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--ink); font-size:13px; }
+  code{ background:#0a120e; padding:2px 6px; border-radius:6px; font-size:12px; color:var(--grn2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><span class="dot"></span> Consensus Garden</div>
+  <h1>Plant your tree on Ethereum</h1>
+  <p class="sub">A living, fully on-chain NFT. The art is rendered in the contract and grows over real time. Your <b>species is forged from your GitHub by GenLayer AI consensus</b> and settled here. One per wallet, free (you pay only gas).</p>
+
+  <div class="panel">
+    <div class="stat"><span id="supply">supply —</span><span id="net">not connected</span></div>
+
+    <div class="row">
+      <label>GitHub handle (optional — sets your species)</label>
+      <input id="gh" placeholder="e.g. yonecode" autocomplete="off" spellcheck="false" />
+    </div>
+
+    <div class="row" id="connectRow">
+      <button id="connect">Connect wallet</button>
+    </div>
+    <div class="row" id="mintRow" style="display:none">
+      <button id="mint">Plant my tree</button>
+    </div>
+
+    <div id="msg" class="note" style="display:none"></div>
+
+    <div id="preview" class="preview" style="display:none">
+      <img id="art" alt="your tree" />
+      <div class="links">
+        <a id="viewer" target="_blank" rel="noopener">Open 3D viewer</a>
+        <a id="os" target="_blank" rel="noopener">View on OpenSea</a>
+      </div>
+    </div>
+
+    <div class="note">
+      Testnet (Sepolia). The species starts provisional and is revealed once GenLayer validators read your GitHub and agree — usually within a few minutes. Your wallet signs the mint; no keys ever leave your browser.
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  createPublicClient, createWalletClient, custom, http, parseAbi
+} from "https://esm.sh/viem@2.21.54";
+import { sepolia } from "https://esm.sh/viem@2.21.54/chains";
+
+const GARDEN = "0x78832F0912808c56139264cA0316e48566B9791A";
+const RPC = "https://ethereum-sepolia-rpc.publicnode.com";
+const VIEWER = "https://consensus-garden.pages.dev/nft/?id=";
+const SEPOLIA_HEX = "0xaa36a7";
+
+const ABI = parseAbi([
+  "function mint(string github) returns (uint256)",
+  "function tokenOf(address) view returns (uint256)",
+  "function totalMinted() view returns (uint256)",
+  "function CAP() view returns (uint256)",
+  "function tokenURI(uint256) view returns (string)",
+]);
+
+const $ = (id) => document.getElementById(id);
+const pub = createPublicClient({ chain: sepolia, transport: http(RPC) });
+let account = null, wallet = null;
+
+function msg(t, cls) { const m = $("msg"); m.style.display = "block"; m.className = "note " + (cls || ""); m.innerHTML = t; }
+
+async function refreshSupply() {
+  try {
+    const [tm, cap] = await Promise.all([
+      pub.readContract({ address: GARDEN, abi: ABI, functionName: "totalMinted" }),
+      pub.readContract({ address: GARDEN, abi: ABI, functionName: "CAP" }),
+    ]);
+    $("supply").textContent = `${tm} / ${cap} planted`;
+  } catch { $("supply").textContent = "supply —"; }
+}
+
+async function showToken(id) {
+  try {
+    const uri = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenURI", args: [id] });
+    const json = JSON.parse(atob(uri.split(",")[1]));
+    $("art").src = json.image;
+    $("viewer").href = VIEWER + id;
+    $("os").href = `https://testnets.opensea.io/assets/sepolia/${GARDEN}/${id}`;
+    $("preview").style.display = "block";
+  } catch (e) { /* token may still be settling */ }
+}
+
+async function ensureSepolia(eth) {
+  const cid = await eth.request({ method: "eth_chainId" });
+  if (cid === SEPOLIA_HEX) return true;
+  try {
+    await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: SEPOLIA_HEX }] });
+    return true;
+  } catch (e) {
+    if (e.code === 4902) {
+      await eth.request({ method: "wallet_addEthereumChain", params: [{
+        chainId: SEPOLIA_HEX, chainName: "Sepolia", nativeCurrency: { name: "SepoliaETH", symbol: "ETH", decimals: 18 },
+        rpcUrls: [RPC], blockExplorerUrls: ["https://sepolia.etherscan.io"]
+      }] });
+      return true;
+    }
+    throw e;
+  }
+}
+
+$("connect").onclick = async () => {
+  const eth = window.ethereum;
+  if (!eth) { msg("No wallet found. Install MetaMask or Rabby.", "err"); return; }
+  try {
+    const [addr] = await eth.request({ method: "eth_requestAccounts" });
+    await ensureSepolia(eth);
+    account = addr;
+    wallet = createWalletClient({ account: addr, chain: sepolia, transport: custom(eth) });
+    $("net").textContent = addr.slice(0, 6) + "…" + addr.slice(-4) + " · Sepolia";
+    $("connectRow").style.display = "none";
+    $("mintRow").style.display = "block";
+    const existing = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [addr] });
+    if (existing > 0n) { msg(`You already have tree <b>#${existing}</b>.`, "ok"); showToken(existing); }
+  } catch (e) { msg("Connection failed: " + (e.shortMessage || e.message), "err"); }
+};
+
+$("mint").onclick = async () => {
+  if (!wallet) return;
+  const gh = $("gh").value.trim().replace(/^@/, "");
+  $("mint").disabled = true;
+  msg("Confirm the transaction in your wallet…");
+  try {
+    const hash = await wallet.writeContract({ address: GARDEN, abi: ABI, functionName: "mint", args: [gh] });
+    msg(`Planting… tx <code>${hash.slice(0, 10)}…</code> waiting for confirmation.`);
+    await pub.waitForTransactionReceipt({ hash });
+    const id = await pub.readContract({ address: GARDEN, abi: ABI, functionName: "tokenOf", args: [account] });
+    msg(`🌳 Planted tree <b>#${id}</b>! GenLayer is forging your species now.`, "ok");
+    await refreshSupply();
+    await showToken(id);
+  } catch (e) {
+    msg("Mint failed: " + (e.shortMessage || e.message), "err");
+  } finally { $("mint").disabled = false; }
+};
+
+refreshSupply();
+if (window.ethereum) window.ethereum.on?.("accountsChanged", () => location.reload());
+</script>
+</body>
+</html>

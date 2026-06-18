@@ -1,0 +1,14 @@
+{
+  "name": "consensus-garden-relayer",
+  "private": true,
+  "type": "module",
+  "description": "GenLayer -> Ethereum species relayer for Consensus Garden",
+  "scripts": {
+    "start": "node relayer.mjs",
+    "once": "node relayer.mjs --once"
+  },
+  "dependencies": {
+    "genlayer-js": "1.1.8",
+    "viem": "2.21.54"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "consensus-garden-attestor",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node sign.mjs" },
+  "dependencies": {
+    "viem": "2.21.54",
+    "@privy-io/server-auth": "1.18.4"
+  }
+}
