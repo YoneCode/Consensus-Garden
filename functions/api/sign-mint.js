@@ -14,6 +14,27 @@ import { privateKeyToAccount } from "viem/accounts";
 const json = (o, status = 200) =>
   new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json" } });
 
+// Health check: returns the PUBLIC signer address derived from SIGNER_PRIVATE_KEY
+// (no secret exposed) so you can confirm it matches the contract's signer().
+export async function onRequestGet(context) {
+  const { env } = context;
+  try {
+    let pk = env.SIGNER_PRIVATE_KEY || "";
+    if (!pk.startsWith("0x")) pk = "0x" + pk;
+    const signer = privateKeyToAccount(pk);
+    return json({
+      ok: true,
+      signer: signer.address,
+      garden: env.GARDEN_ADDRESS || null,
+      chainId: Number(env.CHAIN_ID || 0),
+      hasPrivyAppId: !!env.PRIVY_APP_ID,
+      hasPrivyAppSecret: !!env.PRIVY_APP_SECRET,
+    });
+  } catch (e) {
+    return json({ ok: false, error: "SIGNER_PRIVATE_KEY missing or invalid" }, 500);
+  }
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   try {
