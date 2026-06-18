@@ -17,6 +17,8 @@
 
 </div>
 
+<a href="https://consensus-garden.pages.dev"><img src="media/garden.gif" width="100%" alt="Consensus Garden — a walkable, fully on-chain 3D garden (click for the live dApp)" /></a>
+
 ---
 
 ## What it is
