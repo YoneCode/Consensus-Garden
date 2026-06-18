@@ -61,7 +61,7 @@
   <div class="k">GenLayer · Proof of Build</div>
   <img src="/logo.svg" alt="" style="width:52px;height:52px;filter:drop-shadow(0 4px 14px rgba(47,158,84,.4))">
   <h1>Consensus <em>Garden</em></h1>
-  <div class="hint">2,000 builders · living trees grown on-chain<br>WASD move · mouse look · E to inspect · Enter to chat</div>
+  <div class="hint">1,000 builders · living trees grown on-chain<br>WASD move · mouse look · E to inspect · Enter to chat</div>
   <button class="enter">Enter the garden →</button>
   <div class="foot">On-chain · GenLayer Testnet Bradbury</div>
 </div>
@@ -244,7 +244,7 @@ function plantTree(dna,age,xz,top,name,id){
 const plantedTokens=[]; let CONTRACT=''; let inspectOpen=false;
 (async()=>{
   const wq=new URLSearchParams(location.search).get('wallet');
-  const url=wq?('/api/tokens/'+wq):'/api/tokens';
+  const url='/api/eth-tokens';
   let d=null;
   try{d=await (await fetch(url)).json();}catch(e){}
   if(!d||!d.tokens)try{d=await (await fetch('../garden_tokens.json')).json();}catch(e){}
@@ -808,7 +808,7 @@ if(!CINE) try {
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   // online chip (top-center, clear of the inspect panel)
   const card=document.createElement('div');card.id='online';
-  card.innerHTML='<div class="o1"><span class="dot"></span><b id="onN">1</b>&nbsp;online</div><div class="o2"><b id="onM">'+(window.__minted||0)+'</b> / 2000 minted</div>';
+  card.innerHTML='<div class="o1"><span class="dot"></span><b id="onN">1</b>&nbsp;online</div><div class="o2"><b id="onM">'+(window.__minted||0)+'</b> / 1000 minted</div>';
   document.body.appendChild(card);
   const setOnline=n=>{const e=document.getElementById('onN');if(e&&n!=null)e.textContent=n;const m=document.getElementById('onM');if(m)m.textContent=(window.__minted||0);};
   setInterval(()=>setOnline(),2000);

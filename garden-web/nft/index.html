@@ -149,7 +149,7 @@ const stage=a=>a<0.06?'Seed':a<0.18?'Sprout':a<0.4?'Sapling':a<0.7?'Young':a<0.9
   let born=parseInt(q.get('born')||String(Math.floor(Date.now()/1000)),10);
   let id=q.get('id')||'?'; let species=null;
   if(q.get('id')){ let d=null;
-    try{d=await (await fetch('/api/tokens')).json();}catch(e){}
+    try{d=await (await fetch('/api/eth-tokens')).json();}catch(e){}
     if(!d||!d.tokens)try{d=await (await fetch('../garden_tokens.json')).json();}catch(e){}
     const tok=((d&&d.tokens)||[]).find(t=>String(t.id)===String(q.get('id')));
     if(tok){seed=tok.seed;born=tok.mint_ts;species=tok.species;id=tok.id;}
