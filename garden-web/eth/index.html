@@ -77,7 +77,7 @@ const ABI = parseAbi([
 const $ = (id) => document.getElementById(id);
 const pub = createPublicClient({ chain: mainnet, transport: http(RPC) });
 
-let account = null, gh = null, ghSig = null, ghWallet = null, owned = 0, busy = false;
+let account = null, gh = null, ghSig = null, ghWallet = null, owned = 0, busy = false, soldOut = false;
 
 function msg(t, cls){ const m=$("msg"); m.style.display="block"; m.className="note "+(cls||""); m.innerHTML=t; }
 
@@ -100,7 +100,9 @@ async function refreshSupply(){
       pub.readContract({ address: GARDEN, abi: ABI, functionName: "totalSupply" }),
       pub.readContract({ address: GARDEN, abi: ABI, functionName: "CAP" }),
     ]);
-    $("supply").textContent = `${tm} / ${cap} planted`;
+    soldOut = Number(tm) >= Number(cap);
+    $("supply").textContent = soldOut ? `sold out · ${cap} / ${cap}` : `${tm} / ${cap} planted`;
+    render();
   } catch { $("supply").textContent = "supply —"; }
 }
 
@@ -166,6 +168,10 @@ function render(){
   const f = $("flow");
   if (owned > 0) {
     f.innerHTML = `<div style="text-align:center;padding:6px 0 2px"><b class="ok" style="font-size:16px">🌳 This wallet already planted tree #${owned}</b><p style="color:var(--mut);font-size:13px;margin:8px 0 0">One tree per wallet — yours is below.</p></div>`;
+    return;
+  }
+  if (soldOut) {
+    f.innerHTML = `<div style="text-align:center;padding:8px 0"><b style="font-size:17px;color:#e0843a">🌳 Sold out — all 1,000 trees planted</b><p style="color:var(--mut);font-size:13px;margin:8px 0 12px">The garden is full. Walk it in 3D or browse the collection.</p><div class="links"><a href="/garden3d/">Walk the garden</a><a href="https://opensea.io/collection/consensus-garden-gen" target="_blank" rel="noopener">OpenSea</a></div></div>`;
     return;
   }
   let h = "";

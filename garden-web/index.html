@@ -229,6 +229,7 @@
       const r=await fetch('https://ethereum-rpc.publicnode.com',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:G,data:'0x18160ddd'},'latest']})});
       const j=await r.json();const n=parseInt(j.result||'0x0',16);
       const c=document.getElementById('cMint');if(c)c.textContent=n;
+      if(n>=1000){const chip=document.getElementById('chip');if(chip)chip.innerHTML='<span class="dot" style="background:#e0843a;box-shadow:none;animation:none"></span><b style="color:#e0843a">SOLD OUT</b>&nbsp;· 1000 / 1000 planted';}
     }catch(_){}
   })();
   // scroll reveal
