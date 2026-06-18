@@ -6,11 +6,9 @@
 //
 // Cloudflare env (Settings -> Environment variables):
 //   PRIVY_APP_ID, PRIVY_APP_SECRET (secret),
-//   PRIVY_VERIFICATION_KEY (the app's public key PEM, from Privy dashboard
-//     -> App settings -> "Verification key"; secret not required, it's public),
 //   SIGNER_PRIVATE_KEY (secret), GARDEN_ADDRESS, CHAIN_ID (1),
 //   MIN_ACCOUNT_AGE_DAYS (30)
-import { importSPKI, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { privateKeyToAccount } from "viem/accounts";
 
 const json = (o, status = 200) =>
@@ -23,9 +21,9 @@ export async function onRequestPost(context) {
     if (!/^0x[0-9a-fA-F]{40}$/.test(wallet || "")) return json({ error: "bad wallet" }, 400);
     if (!privyToken) return json({ error: "missing privyToken" }, 400);
 
-    // 1) verify the Privy access token (signature, issuer, audience, expiry)
-    const key = await importSPKI(env.PRIVY_VERIFICATION_KEY, "ES256");
-    const { payload } = await jwtVerify(privyToken, key, { issuer: "privy.io", audience: env.PRIVY_APP_ID });
+    // 1) verify the Privy access token against the app's public JWKS
+    const JWKS = createRemoteJWKSet(new URL("https://auth.privy.io/api/v1/apps/" + env.PRIVY_APP_ID + "/jwks.json"));
+    const { payload } = await jwtVerify(privyToken, JWKS, { issuer: "privy.io", audience: env.PRIVY_APP_ID });
     const did = payload.sub;
     if (!did) return json({ error: "invalid token" }, 401);
 
